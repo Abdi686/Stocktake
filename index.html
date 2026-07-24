@@ -3,33 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Hub - Supplier & Spend Forecast System</title>
+    <title>Enterprise Hub - GO CATER Inventory & Procurement System</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; margin: 0; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
-        h1, h2, h3 { color: #38bdf8; margin: 0 0 5px 0; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: #0284c7; color: #ffffff; border-color: #38bdf8; }
-        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        
-        /* Table Styles */
-        .table-container { max-height: 600px; overflow-y: auto; border: 1px solid #334155; border-radius: 8px;}
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-purple: #c084fc;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        h1 { color: var(--accent-blue); margin: 0 0 5px 0; font-size: 1.8rem; }
+        p { margin: 0; color: var(--text-sub); }
+
+        /* Navigation Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            background: var(--bg-card);
+            color: var(--text-sub);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover { background: #273549; color: var(--text-main); }
+        .tab-btn.active {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: var(--accent-blue);
+        }
+
+        /* Card Layout */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Tables */
+        .table-container { max-height: 550px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 12px; border-bottom: 1px solid #334155; }
-        th { background: #0f172a; color: #38bdf8; position: sticky; top: 0; z-index: 1;}
-        
-        /* Supplier Tags */
-        .supplier-tag { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; white-space: nowrap;}
+        th, td { padding: 12px; border-bottom: 1px solid var(--border-color); }
+        th { background: #0b1120; color: var(--accent-blue); position: sticky; top: 0; z-index: 2; }
+        tr:hover { background-color: rgba(255,255,255,0.02); }
+
+        /* Badges & Tags */
+        .supplier-tag { padding: 4px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: bold; white-space: nowrap; }
         .jj-food { background: #1e3a8a; color: #93c5fd; }
         .costco { background: #831843; color: #fbcfe8; }
-        
-        /* Buttons & Layout */
-        .filter-btn { background: #334155; color: #f8fafc; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px; }
-        .filter-btn.active { background: #0284c7; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .metric-value { font-size: 1.8rem; font-weight: bold; color: #38bdf8; margin-top: 5px; }
+
+        /* Forms & Inputs */
+        input, select, button {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+        button.action-btn {
+            background: #0284c7;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        button.action-btn:hover { background: #0369a1; }
+
+        /* Grid Cards for Metrics */
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .metric-card { background: #182234; border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; }
+        .metric-value { font-size: 1.6rem; font-weight: bold; color: var(--accent-blue); margin-top: 5px; }
+
+        /* Scanner Modal */
+        #scannerModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .scanner-box { background: var(--bg-card); padding: 20px; border-radius: 12px; max-width: 500px; width: 90%; text-align: center; }
+        #reader { width: 100%; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -38,29 +124,37 @@
     <header>
         <div>
             <h1>GO CATER - Inventory & Procurement Hub</h1>
-            <p style="color:#94a3b8; margin:0;">Supplier Management & Financial Forecasting System</p>
+            <p>Order Processing, Delivery Tracking, Supplier Catalog & Spend Forecasting</p>
         </div>
+        <button class="action-btn" onclick="openScanner()">📷 Scan Barcode</button>
     </header>
 
-    <!-- Navigation Tabs -->
+    <!-- Navigation Bar -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('inventory')">Inventory & Suppliers</button>
-        <button class="tab-btn" onclick="switchTab('reports')">Spend & Forecast Reports</button>
+        <button class="tab-btn active" onclick="switchTab('inventory')">📦 Inventory Directory</button>
+        <button class="tab-btn" onclick="switchTab('orderCart')">🛒 Create Customer Order</button>
+        <button class="tab-btn" onclick="switchTab('deliveries')">🚚 Inbound Delivery Dock</button>
+        <button class="tab-btn" onclick="switchTab('procurement')">📋 Reorder List</button>
+        <button class="tab-btn" onclick="switchTab('reports')">📊 Spend & Forecast Reports</button>
     </div>
 
-    <!-- Inventory Tab -->
+    <!-- 1. Inventory Directory Tab -->
     <div id="inventory" class="tab-content">
         <div class="card">
-            <h3>Supplier Inventory Directory (80 Items)</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+                <h3>Master Inventory Catalog (80 Stock Items)</h3>
+                <input type="text" id="searchInput" placeholder="Search item or supplier..." onkeyup="filterInventory()">
+            </div>
             <div class="table-container">
-                <table id="inventoryTable">
+                <table>
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Barcode</th>
                             <th>Item Name</th>
                             <th>Category</th>
                             <th>Supplier</th>
-                            <th>Buy Cost (£)</th>
+                            <th>Cost Price (£)</th>
                             <th>Sell Price (£)</th>
                             <th>Current Stock</th>
                         </tr>
@@ -71,44 +165,122 @@
         </div>
     </div>
 
-    <!-- Spend & Forecast Reports Tab -->
+    <!-- 2. Create Customer Order Tab -->
+    <div id="orderCart" class="tab-content" style="display: none;">
+        <div class="card">
+            <h3>Sales Order Cart</h3>
+            <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                <select id="itemSelect" style="flex:1;"></select>
+                <input type="number" id="orderQty" value="1" min="1" style="width:80px;">
+                <button class="action-btn" onclick="addToCart()">Add to Order</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Supplier</th>
+                            <th>Qty</th>
+                            <th>Unit Cost (£)</th>
+                            <th>Unit Sell (£)</th>
+                            <th>Total Sell (£)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartBody"></tbody>
+                </table>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+                <h4>Total Order Value: <span id="cartTotal" style="color:var(--accent-green);">£0.00</span></h4>
+                <button class="action-btn" onclick="checkoutOrder()">Complete & Dispatch Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Inbound Delivery Dock Tab -->
+    <div id="deliveries" class="tab-content" style="display: none;">
+        <div class="card">
+            <h3>Inbound Shipments Receiving Dock</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delivery ID</th>
+                            <th>Supplier</th>
+                            <th>Manifest Item</th>
+                            <th>Expected Quantity</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deliveryBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Reorder Procurement Tab -->
+    <div id="procurement" class="tab-content" style="display: none;">
+        <div class="card">
+            <h3>Low Stock Reorder List</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Supplier</th>
+                            <th>Buy Cost (£)</th>
+                            <th>Current Level</th>
+                            <th>Recommended Reorder</th>
+                        </tr>
+                    </thead>
+                    <tbody id="procurementBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Spend & Forecast Reports Tab -->
     <div id="reports" class="tab-content" style="display: none;">
         <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
-                <h3>Procurement Spending & Forecasting Analysis</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; flex-wrap:wrap; gap:10px;">
+                <h3>Supplier Spend Analysis & Forecasting</h3>
                 <div>
-                    <button class="filter-btn active" onclick="updateReport('daily', this)">Daily</button>
-                    <button class="filter-btn" onclick="updateReport('weekly', this)">Weekly</button>
-                    <button class="filter-btn" onclick="updateReport('monthly', this)">Monthly</button>
+                    <button class="filter-btn active" onclick="updateReport('daily', this)">Daily Report</button>
+                    <button class="filter-btn" onclick="updateReport('weekly', this)">Weekly Report</button>
+                    <button class="filter-btn" onclick="updateReport('monthly', this)">Monthly Report</button>
                 </div>
             </div>
 
-            <!-- Summary Metric Cards -->
-            <div class="grid-3">
-                <div class="card" style="margin:0;">
+            <div class="grid-4">
+                <div class="metric-card">
                     <div>JJ Food Service Spend</div>
                     <div id="jjSpend" class="metric-value">£0.00</div>
                 </div>
-                <div class="card" style="margin:0;">
+                <div class="metric-card">
                     <div>Costco Spend</div>
                     <div id="costcoSpend" class="metric-value">£0.00</div>
                 </div>
-                <div class="card" style="margin:0;">
-                    <div>Total Projected Spend</div>
-                    <div id="totalSpend" class="metric-value" style="color: #4ade80;">£0.00</div>
+                <div class="metric-card">
+                    <div>Total Baseline Spend</div>
+                    <div id="totalSpend" class="metric-value">£0.00</div>
+                </div>
+                <div class="metric-card">
+                    <div>Forecast Growth (+5%)</div>
+                    <div id="forecastSpend" class="metric-value" style="color:var(--accent-green);">£0.00</div>
                 </div>
             </div>
 
-            <!-- Supplier Breakdown Table -->
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Supplier</th>
                             <th>Item Category</th>
-                            <th>Items Tracked</th>
-                            <th>Calculated Cost (£)</th>
-                            <th>Forecast Spend (+5% Buffer)</th>
+                            <th>Total Tracked Items</th>
+                            <th>Calculated Period Spend (£)</th>
+                            <th>Period Forecast (£)</th>
                         </tr>
                     </thead>
                     <tbody id="reportTableBody"></tbody>
@@ -118,104 +290,134 @@
     </div>
 </div>
 
+<!-- Camera Barcode Modal -->
+<div id="scannerModal">
+    <div class="scanner-box">
+        <h3>Barcode Scanner</h3>
+        <p>Point camera at item barcode</p>
+        <div id="reader"></div>
+        <button onclick="closeScanner()" style="margin-top:15px; background:#dc2626; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer;">Close</button>
+    </div>
+</div>
+
 <script>
-    // Master Inventory Data loaded directly from Stock.csv mapped to Suppliers
+    // System Master Stock Database with JJ Food Service and Costco Mapped
     const inventory = [
-        { "id": "1", "name": "Fanta Orange", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "69 Bottles" },
-        { "id": "2", "name": "Coca-Cola Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "68 Bottles" },
-        { "id": "3", "name": "Water", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "55 Bottles" },
-        { "id": "4", "name": "Mountain Dew", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "49 Bottles" },
-        { "id": "5", "name": "Sprite", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "41 Bottles" },
-        { "id": "6", "name": "Pepsi Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "34 Bottles" },
-        { "id": "7", "name": "Boost Energy Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "28 Bottles" },
-        { "id": "8", "name": "Lipton Ice Tea (Peach)", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "25 Bottles" },
-        { "id": "9", "name": "Fanta Fruit Twist", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "24 Bottles" },
-        { "id": "10", "name": "Coke Zero", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "24 Bottles" },
-        { "id": "11", "name": "Diet Coke", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "24 Bottles" },
-        { "id": "12", "name": "Oasis Summer Fruits", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "20 Bottles" },
-        { "id": "13", "name": "Pepsi Max", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "15 Bottles" },
-        { "id": "14", "name": "Oasis Citrus Punch", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "12 Bottles" },
-        { "id": "15", "name": "Boost Red Berry", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "8 Bottles" },
-        { "id": "16", "name": "Coca-Cola Original", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "204 Cans" },
-        { "id": "17", "name": "Sprite", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "65 Cans" },
-        { "id": "18", "name": "Pepsi Original", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "53 Cans" },
-        { "id": "19", "name": "Coke Zero", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "53 Cans" },
-        { "id": "20", "name": "7Up", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "36 Cans" },
-        { "id": "21", "name": "Fanta Lemon", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "33 Cans" },
-        { "id": "22", "name": "Tango Apple", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "32 Cans" },
-        { "id": "23", "name": "Fanta Orange", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "29 Cans" },
-        { "id": "24", "name": "Pepsi Max", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "27 Cans" },
-        { "id": "25", "name": "Fanta Fruit Twist", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "24 Cans" },
-        { "id": "26", "name": "Lipton Ice Tea (Peach)", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "16 Cans" },
-        { "id": "27", "name": "Rio", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "13 Cans" },
-        { "id": "28", "name": "Dr Pepper", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "12 Cans" },
-        { "id": "29", "name": "Coca-Cola Cherry", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "10 Cans" },
-        { "id": "30", "name": "Diet Coke", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "7 Cans" },
-        { "id": "31", "name": "Lipton Ice Tea (Lemon)", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "5 Cans" },
-        { "id": "32", "name": "Rubicon", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "3 Cans" },
-        { "id": "33", "name": "Monster Pipeline Punch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "98 Cans" },
-        { "id": "34", "name": "Monster Original", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "82 Cans" },
-        { "id": "35", "name": "Monster Ultra White", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "67 Cans" },
-        { "id": "36", "name": "Red Bull", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "52 Cans" },
-        { "id": "37", "name": "Monster Mango Loco", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "48 Cans" },
-        { "id": "38", "name": "Monster Ultra Strawberry", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "40 Cans" },
-        { "id": "39", "name": "Monster Aussie Lemonade", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "12 Cans" },
-        { "id": "40", "name": "Monster Ultra Peachy Keen", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "12 Cans" },
-        { "id": "41", "name": "Monster Monarch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "10 Cans" },
-        { "id": "42", "name": "Monster Tropical", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "10 Cans" },
-        { "id": "43", "name": "Monster Rio Punch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "0 Cans" },
-        { "id": "44", "name": "Cheese Slices", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "187 Slices" },
-        { "id": "45", "name": "Veggie Burger", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "70 Pieces" },
-        { "id": "46", "name": "Chicken Strips", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "60 Pieces" },
-        { "id": "47", "name": "Seeded Burger Buns", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "60 Pieces" },
-        { "id": "48", "name": "Beef Burger", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "54 Pieces" },
-        { "id": "49", "name": "Chips", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "35 Packs" },
-        { "id": "50", "name": "Wraps", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "33 Pieces" },
-        { "id": "51", "name": "Chicken Fillets", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "17 Pieces" },
-        { "id": "52", "name": "Tea Bags", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "430 Tea Bags" },
-        { "id": "53", "name": "Sugar (10kg)", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "20 kg" },
-        { "id": "54", "name": "Sauce Dips", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "100 Dips" },
-        { "id": "55", "name": "Burger Sauce", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "2 Bottles" },
-        { "id": "56", "name": "Sweet Chilli Sauce", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "2 Bottles" },
-        { "id": "57", "name": "Mayonnaise", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "0.5 Bottle" },
-        { "id": "58", "name": "Spoons", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "500 Pieces" },
-        { "id": "59", "name": "Forks", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "200 Pieces" },
-        { "id": "60", "name": "Wrap Paper", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "30 Pieces" },
-        { "id": "61", "name": "Meal Boxes", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "15 Pieces" },
-        { "id": "62", "name": "Blue Roll", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "16 Rolls" },
-        { "id": "63", "name": "Cooking Oil (5L)", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "17.5 Litres" },
-        { "id": "64", "name": "Fairy Liquid", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "1.5 Bottles" },
-        { "id": "65", "name": "White Bags", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "3 Packs" },
-        { "id": "66", "name": "Gloves", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "1 Box (30s)" },
-        { "id": "67", "name": "Small Cups", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "1 Box" },
-        { "id": "68", "name": "Onions", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "total": "10 Pieces" },
-        { "id": "69", "name": "Lettuce", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "total": "4 Pieces" },
-        { "id": "70", "name": "Tomatoes", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "total": "3 Pieces" },
-        { "id": "71", "name": "Extra Gum", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "126 Pieces" },
-        { "id": "72", "name": "Werther's Original", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "120 Pieces" },
-        { "id": "73", "name": "Parle", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "95 Pieces" },
-        { "id": "74", "name": "Bounty", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "57 Pieces" },
-        { "id": "75", "name": "Snickers", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "24 Pieces" },
-        { "id": "76", "name": "5 Star", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "23 Pieces" },
-        { "id": "77", "name": "KitKat", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "22 Pieces" },
-        { "id": "78", "name": "Kinder Bueno", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "16 Pieces" },
-        { "id": "79", "name": "Mr Tom", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "14 Pieces" },
-        { "id": "80", "name": "Fruittella", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "4 Pieces" }
+        { "id": "1", "barcode": "501000100", "name": "Fanta Orange", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 69, "unit": "Bottles" },
+        { "id": "2", "barcode": "501000101", "name": "Coca-Cola Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 68, "unit": "Bottles" },
+        { "id": "3", "barcode": "501000102", "name": "Water", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 55, "unit": "Bottles" },
+        { "id": "4", "barcode": "501000103", "name": "Mountain Dew", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 49, "unit": "Bottles" },
+        { "id": "5", "barcode": "501000104", "name": "Sprite", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 41, "unit": "Bottles" },
+        { "id": "6", "barcode": "501000105", "name": "Pepsi Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 34, "unit": "Bottles" },
+        { "id": "7", "barcode": "501000106", "name": "Boost Energy Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 28, "unit": "Bottles" },
+        { "id": "8", "barcode": "501000107", "name": "Lipton Ice Tea (Peach)", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 25, "unit": "Bottles" },
+        { "id": "9", "barcode": "501000108", "name": "Fanta Fruit Twist", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 24, "unit": "Bottles" },
+        { "id": "10", "barcode": "501000109", "name": "Coke Zero", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 24, "unit": "Bottles" },
+        { "id": "11", "barcode": "501000110", "name": "Diet Coke", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 24, "unit": "Bottles" },
+        { "id": "12", "barcode": "501000111", "name": "Oasis Summer Fruits", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 20, "unit": "Bottles" },
+        { "id": "13", "barcode": "501000112", "name": "Pepsi Max", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 15, "unit": "Bottles" },
+        { "id": "14", "barcode": "501000113", "name": "Oasis Citrus Punch", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 12, "unit": "Bottles" },
+        { "id": "15", "barcode": "501000114", "name": "Boost Red Berry", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 8, "unit": "Bottles" },
+        { "id": "16", "barcode": "501000115", "name": "Coca-Cola Original Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 204, "unit": "Cans" },
+        { "id": "17", "barcode": "501000116", "name": "Sprite Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 65, "unit": "Cans" },
+        { "id": "18", "barcode": "501000117", "name": "Pepsi Original Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 53, "unit": "Cans" },
+        { "id": "19", "barcode": "501000118", "name": "Coke Zero Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 53, "unit": "Cans" },
+        { "id": "20", "barcode": "501000119", "name": "7Up Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 36, "unit": "Cans" },
+        { "id": "21", "barcode": "501000120", "name": "Fanta Lemon Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 33, "unit": "Cans" },
+        { "id": "22", "barcode": "501000121", "name": "Tango Apple Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 32, "unit": "Cans" },
+        { "id": "23", "barcode": "501000122", "name": "Fanta Orange Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 29, "unit": "Cans" },
+        { "id": "24", "barcode": "501000123", "name": "Pepsi Max Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 27, "unit": "Cans" },
+        { "id": "25", "barcode": "501000124", "name": "Fanta Fruit Twist Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 24, "unit": "Cans" },
+        { "id": "26", "barcode": "501000125", "name": "Lipton Peach Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 16, "unit": "Cans" },
+        { "id": "27", "barcode": "501000126", "name": "Rio Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 13, "unit": "Cans" },
+        { "id": "28", "barcode": "501000127", "name": "Dr Pepper Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 12, "unit": "Cans" },
+        { "id": "29", "barcode": "501000128", "name": "Coca-Cola Cherry Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 10, "unit": "Cans" },
+        { "id": "30", "barcode": "501000129", "name": "Diet Coke Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 7, "unit": "Cans" },
+        { "id": "31", "barcode": "501000130", "name": "Lipton Lemon Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 5, "unit": "Cans" },
+        { "id": "32", "barcode": "501000131", "name": "Rubicon Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 3, "unit": "Cans" },
+        { "id": "33", "barcode": "501000132", "name": "Monster Pipeline Punch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 98, "unit": "Cans" },
+        { "id": "34", "barcode": "501000133", "name": "Monster Original", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 82, "unit": "Cans" },
+        { "id": "35", "barcode": "501000134", "name": "Monster Ultra White", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 67, "unit": "Cans" },
+        { "id": "36", "barcode": "501000135", "name": "Red Bull", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 52, "unit": "Cans" },
+        { "id": "37", "barcode": "501000136", "name": "Monster Mango Loco", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 48, "unit": "Cans" },
+        { "id": "38", "barcode": "501000137", "name": "Monster Ultra Strawberry", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 40, "unit": "Cans" },
+        { "id": "39", "barcode": "501000138", "name": "Monster Aussie Lemonade", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 12, "unit": "Cans" },
+        { "id": "40", "barcode": "501000139", "name": "Monster Ultra Peachy Keen", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 12, "unit": "Cans" },
+        { "id": "41", "barcode": "501000140", "name": "Monster Monarch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 10, "unit": "Cans" },
+        { "id": "42", "barcode": "501000141", "name": "Monster Tropical", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 10, "unit": "Cans" },
+        { "id": "43", "barcode": "501000142", "name": "Monster Rio Punch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 0, "unit": "Cans" },
+        { "id": "44", "barcode": "501000143", "name": "Cheese Slices", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 187, "unit": "Slices" },
+        { "id": "45", "barcode": "501000144", "name": "Veggie Burger", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 70, "unit": "Pieces" },
+        { "id": "46", "barcode": "501000145", "name": "Chicken Strips", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 60, "unit": "Pieces" },
+        { "id": "47", "barcode": "501000146", "name": "Seeded Burger Buns", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 60, "unit": "Pieces" },
+        { "id": "48", "barcode": "501000147", "name": "Beef Burger", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 54, "unit": "Pieces" },
+        { "id": "49", "barcode": "501000148", "name": "Chips", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 35, "unit": "Packs" },
+        { "id": "50", "barcode": "501000149", "name": "Wraps", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 33, "unit": "Pieces" },
+        { "id": "51", "barcode": "501000150", "name": "Chicken Fillets", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 17, "unit": "Pieces" },
+        { "id": "52", "barcode": "501000151", "name": "Tea Bags", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 430, "unit": "Tea Bags" },
+        { "id": "53", "barcode": "501000152", "name": "Sugar (10kg)", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 20, "unit": "kg" },
+        { "id": "54", "barcode": "501000153", "name": "Sauce Dips", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 100, "unit": "Dips" },
+        { "id": "55", "barcode": "501000154", "name": "Burger Sauce", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 2, "unit": "Bottles" },
+        { "id": "56", "barcode": "501000155", "name": "Sweet Chilli Sauce", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 2, "unit": "Bottles" },
+        { "id": "57", "barcode": "501000156", "name": "Mayonnaise", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 1, "unit": "Bottle" },
+        { "id": "58", "barcode": "501000157", "name": "Spoons", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 500, "unit": "Pieces" },
+        { "id": "59", "barcode": "501000158", "name": "Forks", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 200, "unit": "Pieces" },
+        { "id": "60", "barcode": "501000159", "name": "Wrap Paper", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 30, "unit": "Pieces" },
+        { "id": "61", "barcode": "501000160", "name": "Meal Boxes", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 15, "unit": "Pieces" },
+        { "id": "62", "barcode": "501000161", "name": "Blue Roll", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 16, "unit": "Rolls" },
+        { "id": "63", "barcode": "501000162", "name": "Cooking Oil (5L)", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 18, "unit": "Litres" },
+        { "id": "64", "barcode": "501000163", "name": "Fairy Liquid", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 2, "unit": "Bottles" },
+        { "id": "65", "barcode": "501000164", "name": "White Bags", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 3, "unit": "Packs" },
+        { "id": "66", "barcode": "501000165", "name": "Gloves", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 1, "unit": "Box" },
+        { "id": "67", "barcode": "501000166", "name": "Small Cups", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 1, "unit": "Box" },
+        { "id": "68", "barcode": "501000167", "name": "Onions", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "stock": 10, "unit": "Pieces" },
+        { "id": "69", "barcode": "501000168", "name": "Lettuce", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "stock": 4, "unit": "Pieces" },
+        { "id": "70", "barcode": "501000169", "name": "Tomatoes", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "stock": 3, "unit": "Pieces" },
+        { "id": "71", "barcode": "501000170", "name": "Extra Gum", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 126, "unit": "Pieces" },
+        { "id": "72", "barcode": "501000171", "name": "Werther's Original", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 120, "unit": "Pieces" },
+        { "id": "73", "barcode": "501000172", "name": "Parle", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 95, "unit": "Pieces" },
+        { "id": "74", "barcode": "501000173", "name": "Bounty", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 57, "unit": "Pieces" },
+        { "id": "75", "barcode": "501000174", "name": "Snickers", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 24, "unit": "Pieces" },
+        { "id": "76", "barcode": "501000175", "name": "5 Star", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 23, "unit": "Pieces" },
+        { "id": "77", "barcode": "501000176", "name": "KitKat", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 22, "unit": "Pieces" },
+        { "id": "78", "barcode": "501000177", "name": "Kinder Bueno", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 16, "unit": "Pieces" },
+        { "id": "79", "barcode": "501000178", "name": "Mr Tom", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 14, "unit": "Pieces" },
+        { "id": "80", "barcode": "501000179", "name": "Fruittella", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 4, "unit": "Pieces" }
     ];
 
-    function renderInventory() {
+    let cart = [];
+    let inboundDeliveries = [
+        { id: "DEL-901", supplier: "JJ Food Service", item: "Cooking Oil (5L)", qty: 10, status: "Pending" },
+        { id: "DEL-902", supplier: "Costco", item: "Coca-Cola Original Can", qty: 15, status: "Pending" },
+        { id: "DEL-903", supplier: "JJ Food Service", item: "Seeded Burger Buns", qty: 20, status: "Pending" }
+    ];
+
+    let html5QrcodeScanner = null;
+
+    function renderInventory(data = inventory) {
         const body = document.getElementById('inventoryBody');
-        body.innerHTML = inventory.map(item => `
+        body.innerHTML = data.map(item => `
             <tr>
                 <td>#${item.id}</td>
+                <td><code>${item.barcode}</code></td>
                 <td><strong>${item.name}</strong></td>
                 <td>${item.category}</td>
                 <td><span class="supplier-tag ${item.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${item.supplier}</span></td>
                 <td>£${item.cost.toFixed(2)}</td>
                 <td>£${item.sell.toFixed(2)}</td>
-                <td>${item.total}</td>
+                <td><strong>${item.stock}</strong> ${item.unit}</td>
             </tr>
         `).join('');
+
+        // Populate dropdown for ordering
+        const select = document.getElementById('itemSelect');
+        select.innerHTML = inventory.map(item => `<option value="${item.id}">${item.name} (${item.supplier}) - Sell £${item.sell.toFixed(2)}</option>`).join('');
+    }
+
+    function filterInventory() {
+        const val = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = inventory.filter(i => i.name.toLowerCase().includes(val) || i.category.toLowerCase().includes(val) || i.supplier.toLowerCase().includes(val));
+        renderInventory(filtered);
     }
 
     function switchTab(tabId) {
@@ -223,10 +425,114 @@
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(tabId).style.display = 'block';
         event.target.classList.add('active');
+
+        if (tabId === 'deliveries') renderDeliveries();
+        if (tabId === 'procurement') renderProcurement();
         if (tabId === 'reports') updateReport('daily');
     }
 
-    // Function to calculate aggregate spend per supplier category based on items logic
+    /* Sales Order Cart Logic */
+    function addToCart() {
+        const itemId = document.getElementById('itemSelect').value;
+        const qty = parseInt(document.getElementById('orderQty').value);
+        const item = inventory.find(i => i.id === itemId);
+
+        const existing = cart.find(c => c.id === itemId);
+        if (existing) {
+            existing.qty += qty;
+        } else {
+            cart.push({ ...item, qty: qty });
+        }
+        renderCart();
+    }
+
+    function removeFromCart(idx) {
+        cart.splice(idx, 1);
+        renderCart();
+    }
+
+    function renderCart() {
+        const body = document.getElementById('cartBody');
+        let total = 0;
+        body.innerHTML = cart.map((item, idx) => {
+            const lineTotal = item.sell * item.qty;
+            total += lineTotal;
+            return `
+                <tr>
+                    <td>${item.name}</td>
+                    <td><span class="supplier-tag ${item.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${item.supplier}</span></td>
+                    <td>${item.qty}</td>
+                    <td>£${item.cost.toFixed(2)}</td>
+                    <td>£${item.sell.toFixed(2)}</td>
+                    <td>£${lineTotal.toFixed(2)}</td>
+                    <td><button style="background:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="removeFromCart(${idx})">Remove</button></td>
+                </tr>
+            `;
+        }).join('');
+        document.getElementById('cartTotal').innerText = `£${total.toFixed(2)}`;
+    }
+
+    function checkoutOrder() {
+        if (cart.length === 0) return alert('Cart is empty!');
+        
+        // Deduct inventory
+        cart.forEach(cartItem => {
+            const stockItem = inventory.find(i => i.id === cartItem.id);
+            if (stockItem) stockItem.stock = Math.max(0, stockItem.stock - cartItem.qty);
+        });
+
+        alert('Order completed successfully! Inventory updated.');
+        cart = [];
+        renderCart();
+        renderInventory();
+    }
+
+    /* Deliveries Dock Logic */
+    function renderDeliveries() {
+        const body = document.getElementById('deliveryBody');
+        body.innerHTML = inboundDeliveries.map((del, idx) => `
+            <tr>
+                <td>${del.id}</td>
+                <td><span class="supplier-tag ${del.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${del.supplier}</span></td>
+                <td><strong>${del.item}</strong></td>
+                <td>${del.qty} Units</td>
+                <td><span style="color:${del.status === 'Received' ? '#4ade80' : '#facc15'}; font-weight:bold;">${del.status}</span></td>
+                <td>
+                    ${del.status === 'Pending' ? `<button class="action-btn" onclick="receiveDelivery(${idx})">Receive Stock</button>` : 'Complete'}
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function receiveDelivery(idx) {
+        const del = inboundDeliveries[idx];
+        del.status = "Received";
+
+        // Find item and add stock
+        const item = inventory.find(i => i.name === del.item);
+        if (item) item.stock += del.qty;
+
+        renderDeliveries();
+        renderInventory();
+    }
+
+    /* Low Stock Procurement */
+    function renderProcurement() {
+        const lowStock = inventory.filter(i => i.stock < 15);
+        const body = document.getElementById('procurementBody');
+        body.innerHTML = lowStock.map(item => `
+            <tr>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.category}</td>
+                <td><span class="supplier-tag ${item.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${item.supplier}</span></td>
+                <td>£${item.cost.toFixed(2)}</td>
+                <td style="color:#ef4444; font-weight:bold;">${item.stock} ${item.unit}</td>
+                <td><strong>+${50 - item.stock} ${item.unit}</strong></td>
+            </tr>
+        `).join('');
+    }
+
+    /* Spend & Forecasting Engine */
     function updateReport(timeframe, btnEl) {
         if (btnEl) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -237,46 +543,75 @@
         let costcoTotal = 0;
         const aggregated = {};
 
-        // Aggregate static logic simulating historical average purchasing behavior
         inventory.forEach(item => {
             const key = `${item.supplier} - ${item.category}`;
             if (!aggregated[key]) {
                 aggregated[key] = { supplier: item.supplier, category: item.category, count: 0, cost: 0 };
             }
             aggregated[key].count += 1;
-            
-            // Assume 1 unit cost per item per day is recorded for base average
-            aggregated[key].cost += item.cost; 
+            aggregated[key].cost += item.cost;
             
             if (item.supplier === 'JJ Food Service') jjTotal += item.cost;
             if (item.supplier === 'Costco') costcoTotal += item.cost;
         });
 
-        // Timeframe Multipliers to build Daily/Weekly/Monthly Forecasting
-        const scaleMap = {
-            'daily': 1,           // 1x Daily average
-            'weekly': 5,          // 5x delivery days a week
-            'monthly': 21         // 21 working days a month
-        };
-        const multiplier = scaleMap[timeframe];
+        // Timeframe Scale Multiplier (Daily, Weekly, Monthly)
+        const scaleMap = { 'daily': 1, 'weekly': 5, 'monthly': 20 };
+        const mult = scaleMap[timeframe];
 
-        document.getElementById('jjSpend').innerText = `£${(jjTotal * multiplier).toFixed(2)}`;
-        document.getElementById('costcoSpend').innerText = `£${(costcoTotal * multiplier).toFixed(2)}`;
-        document.getElementById('totalSpend').innerText = `£${((jjTotal + costcoTotal) * multiplier).toFixed(2)}`;
+        const finalJJ = jjTotal * mult;
+        const finalCostco = costcoTotal * mult;
+        const total = finalJJ + finalCostco;
+
+        document.getElementById('jjSpend').innerText = `£${finalJJ.toFixed(2)}`;
+        document.getElementById('costcoSpend').innerText = `£${finalCostco.toFixed(2)}`;
+        document.getElementById('totalSpend').innerText = `£${total.toFixed(2)}`;
+        document.getElementById('forecastSpend').innerText = `£${(total * 1.05).toFixed(2)}`;
 
         const tbody = document.getElementById('reportTableBody');
         tbody.innerHTML = Object.values(aggregated).map(row => {
-            let rowCost = row.cost * multiplier;
+            let rowCost = row.cost * mult;
             return `
                 <tr>
                     <td><span class="supplier-tag ${row.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${row.supplier}</span></td>
                     <td>${row.category}</td>
                     <td>${row.count} Items</td>
                     <td>£${rowCost.toFixed(2)}</td>
-                    <td style="color:#4ade80;">£${(rowCost * 1.05).toFixed(2)}</td>
+                    <td style="color:var(--accent-green);">£${(rowCost * 1.05).toFixed(2)}</td>
                 </tr>
             `;
         }).join('');
+    }
+
+    /* Camera Barcode Scanner */
+    function openScanner() {
+        document.getElementById('scannerModal').style.display = 'flex';
+        html5QrcodeScanner = new Html5Qrcode("reader");
+        html5QrcodeScanner.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText) => {
+                closeScanner();
+                const found = inventory.find(i => i.barcode === decodedText || i.id === decodedText);
+                if (found) {
+                    alert(`Scanned: ${found.name}\nSupplier: ${found.supplier}\nStock: ${found.stock}`);
+                    document.getElementById('searchInput').value = found.name;
+                    filterInventory();
+                } else {
+                    alert(`Barcode ${decodedText} not found in database.`);
+                }
+            }
+        ).catch(err => console.log(err));
+    }
+
+    function closeScanner() {
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.stop().then(() => {
+                document.getElementById('scannerModal').style.display = 'none';
+            });
+        } else {
+            document.getElementById('scannerModal').style.display = 'none';
+        }
     }
 
     // Init App

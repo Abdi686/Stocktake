@@ -3,84 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GO CATER - Multi-Location Enterprise Hub</title>
-    <!-- HTML5 Barcode Scanner Library -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <title>Enterprise Hub - GO CATER Inventory & Procurement System</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; margin: 0; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
-        h1, h2, h3 { color: #38bdf8; margin: 0 0 5px 0; }
-        .subtitle { color: #94a3b8; font-size: 0.9rem; margin: 0; }
-        
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-purple: #c084fc;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        h1 { color: var(--accent-blue); margin: 0 0 5px 0; font-size: 1.8rem; }
+        p { margin: 0; color: var(--text-sub); }
+
         /* Navigation Tabs */
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
-        .tab-content { display: none; background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; }
-        .tab-content.active { display: block; }
-
-        /* Grid Controls */
-        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .grid-split { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        @media(max-width: 900px) { .grid-split { grid-template-columns: 1fr; } }
-
-        label { display: block; margin-bottom: 8px; color: #94a3b8; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        input, select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
-        input:focus, select:focus { border-color: #38bdf8; outline: none; }
-        
-        /* Tables */
-        .table-responsive { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #334155; }
-        table { width: 100%; border-collapse: collapse; background: #111827; text-align: left; }
-        th, td { padding: 12px 15px; border-bottom: 1px solid #1f2937; font-size: 0.9rem; }
-        th { background: #1e293b; color: #38bdf8; font-weight: 600; }
-        tr:hover { background: rgba(30, 41, 59, 0.5); }
-        
-        /* Badges & Buttons */
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
-        .badge-alert { background: #7f1d1d; color: #fecaca; }
-        .badge-ok { background: #064e3b; color: #a7f3d0; }
-        .badge-depot { background: #3b82f6; color: white; }
-        .badge-hub { background: #a855f7; color: white; }
-
-        .btn { background: #0284c7; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn:hover { background: #0369a1; }
-        .btn-success { background: #10b981; }
-        .btn-success:hover { background: #059669; }
-        .btn-danger { background: #ef4444; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-scan { background: #8b5cf6; }
-        .btn-scan:hover { background: #7c3aed; }
-        .btn-print { background: #f59e0b; color: #000; }
-        .btn-print:hover { background: #d97706; }
-        
-        .summary-card { background: #111827; padding: 15px; border-radius: 8px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
-        .text-green { color: #10b981; font-weight: bold; }
-        .text-red { color: #f87171; font-weight: bold; }
-        
-        .stock-input { width: 80px; padding: 6px; text-align: center; }
-
-        /* Printable QR Grid Styling */
-        .qr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
-        .qr-card { background: #ffffff; color: #000000; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .qr-card img { width: 120px; height: 120px; margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto; }
-        .qr-card .item-title { font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; color: #000; }
-        .qr-card .item-id { font-size: 0.8rem; color: #555; font-family: monospace; }
-
-        /* Scanner Modal UI */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); z-index: 999; justify-content: center; align-items: center; }
-        .modal-overlay.active { display: flex; }
-        .modal-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 90%; max-width: 500px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        #reader { width: 100%; border-radius: 8px; overflow: hidden; background: #000; margin-bottom: 15px; }
-
-        /* Print Media Stylesheet */
-        @media print {
-            body { background: white !important; color: black !important; padding: 0; }
-            .container > header, .tabs, .tab-content:not(#printables), .btn, .no-print { display: none !important; }
-            #printables { display: block !important; background: white !important; border: none !important; padding: 0 !important; }
-            .qr-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 10px !important; }
-            .qr-card { page-break-inside: avoid; border: 1px solid #999 !important; box-shadow: none !important; }
+        .tab-btn {
+            background: var(--bg-card);
+            color: var(--text-sub);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
         }
+        .tab-btn:hover { background: #273549; color: var(--text-main); }
+        .tab-btn.active {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: var(--accent-blue);
+        }
+
+        /* Card Layout */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Tables */
+        .table-container { max-height: 550px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 12px; border-bottom: 1px solid var(--border-color); }
+        th { background: #0b1120; color: var(--accent-blue); position: sticky; top: 0; z-index: 2; }
+        tr:hover { background-color: rgba(255,255,255,0.02); }
+
+        /* Badges & Tags */
+        .supplier-tag { padding: 4px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: bold; white-space: nowrap; }
+        .jj-food { background: #1e3a8a; color: #93c5fd; }
+        .costco { background: #831843; color: #fbcfe8; }
+
+        /* Forms & Inputs */
+        input, select, button {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+        button.action-btn {
+            background: #0284c7;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        button.action-btn:hover { background: #0369a1; }
+
+        /* Grid Cards for Metrics */
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .metric-card { background: #182234; border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; }
+        .metric-value { font-size: 1.6rem; font-weight: bold; color: var(--accent-blue); margin-top: 5px; }
+
+        /* Scanner Modal */
+        #scannerModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .scanner-box { background: var(--bg-card); padding: 20px; border-radius: 12px; max-width: 500px; width: 90%; text-align: center; }
+        #reader { width: 100%; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -88,698 +123,499 @@
 <div class="container">
     <header>
         <div>
-            <h1>GO CATER Matrix Hub</h1>
-            <p class="subtitle">Central Logistics, Stock Control & Aggregated Projections</p>
+            <h1>GO CATER - Inventory & Procurement Hub</h1>
+            <p>Order Processing, Delivery Tracking, Supplier Catalog & Spend Forecasting</p>
         </div>
-        <div style="text-align: right;">
-            <span class="badge badge-depot">Main Kitchen Active</span>
-            <span class="badge badge-hub">4 Outbound Hubs Enabled</span>
-        </div>
+        <button class="action-btn" onclick="openScanner()">📷 Scan Barcode</button>
     </header>
 
-    <!-- Navigation Menu -->
+    <!-- Navigation Bar -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('procurement')">1. Central Procurement</button>
-        <button class="tab-btn" onclick="switchTab('stocktake')">2. Daily Stock Take & Min/Max</button>
-        <button class="tab-btn" onclick="switchTab('deliveries')">3. Confirm Deliveries</button>
-        <button class="tab-btn" onclick="switchTab('projections')">4. Aggregate Projections</button>
-        <button class="tab-btn btn-print" onclick="switchTab('printables')">🖨️ Printable QR Codes</button>
+        <button class="tab-btn active" onclick="switchTab('inventory')">📦 Inventory Directory</button>
+        <button class="tab-btn" onclick="switchTab('orderCart')">🛒 Create Customer Order</button>
+        <button class="tab-btn" onclick="switchTab('deliveries')">🚚 Inbound Delivery Dock</button>
+        <button class="tab-btn" onclick="switchTab('procurement')">📋 Reorder List</button>
+        <button class="tab-btn" onclick="switchTab('reports')">📊 Spend & Forecast Reports</button>
     </div>
 
-    <!-- TAB 1: PROCUREMENT -->
-    <div id="procurement" class="tab-content active">
-        <h2>Central Procurement Order Builder</h2>
-        <p class="subtitle" style="margin-bottom:20px;">Build main wholesale orders allocated to structural operations.</p>
-        
-        <div class="grid-4">
-            <div>
-                <label>Order Handled By</label>
-                <input type="text" id="orderStaff" value="Logistics Manager">
+    <!-- 1. Inventory Directory Tab -->
+    <div id="inventory" class="tab-content">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+                <h3>Master Inventory Catalog (80 Stock Items)</h3>
+                <input type="text" id="searchInput" placeholder="Search item or supplier..." onkeyup="filterInventory()">
             </div>
-            <div>
-                <label>Target Delivery Date</label>
-                <input type="date" id="deliveryDate">
-            </div>
-            <div>
-                <label>Intake Node</label>
-                <select id="allocationRoute">
-                    <option value="Main Kitchen">Main Kitchen (Central Intake)</option>
-                </select>
-            </div>
-            <div>
-                <label>Supplier Vendor</label>
-                <select id="supplierName">
-                    <option value="Lioncroft Wholesale">Lioncroft Wholesale Ltd</option>
-                    <option value="Fresh Produce Hub">Fresh Produce Hub</option>
-                </select>
-            </div>
-        </div>
-
-        <hr style="border-color: #334155; margin: 20px 0;">
-
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1.5fr auto; gap: 15px; align-items: end;">
-            <div>
-                <label>Select Master Inventory Item</label>
-                <select id="ingredientDropdown">
-                    <option value="">-- Select Item --</option>
-                </select>
-            </div>
-            <div>
-                <label>Quantity (Cases/Boxes)</label>
-                <input type="number" id="orderQty" min="1" value="1">
-            </div>
-            <div>
-                <label>Routing Destination</label>
-                <select id="itemDestination">
-                    <option value="Main Kitchen">Main Kitchen (Storage)</option>
-                    <option value="DHL Segro">DHL Segro</option>
-                    <option value="DHL Ryton">DHL Ryton</option>
-                    <option value="Nuneaton">Nuneaton</option>
-                    <option value="Rugby">Rugby</option>
-                </select>
-            </div>
-            <div>
-                <button type="button" class="btn" onclick="addItemToOrder()">Add to manifest</button>
-            </div>
-        </div>
-
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Item Description</th>
-                        <th>Routed Destination</th>
-                        <th>Qty (Cases)</th>
-                        <th>Cost Base</th>
-                        <th>Est Gross Revenue</th>
-                        <th>Net Yield</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="orderTableBody"></tbody>
-            </table>
-        </div>
-
-        <div class="summary-card">
-            <div>Total Matrix Cost: <span id="displayTotalCost" class="text-red">£0.00</span></div>
-            <div>Estimated Revenue: <span id="displayTotalRev" class="text-green">£0.00</span></div>
-            <div>Net Operational Yield: <span id="displayTotalProfit" class="text-green">£0.00</span></div>
-        </div>
-        <button type="button" class="btn btn-success" style="width:100%; margin-top:15px; padding:12px;" onclick="generateSpreadsheet()">Export Master Manifest (CSV)</button>
-    </div>
-
-    <!-- TAB 2: DAILY STOCK TAKE & MIN/MAX CONFIG -->
-    <div id="stocktake" class="tab-content">
-        <h2>Daily Stock Ledger & Safety Thresholds</h2>
-        <p class="subtitle" style="margin-bottom: 20px;">Update physical quantities across locations. Items falling below safety minimums will highlight automatically.</p>
-        
-        <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <div>
-                <label style="display:inline-block; margin-right:10px;">Filter Location Matrix View:</label>
-                <select id="stockLocationFilter" onchange="renderStockTable()" style="width: auto; display:inline-block;">
-                    <option value="all">View All Nodes</option>
-                    <option value="Main Kitchen">Main Kitchen</option>
-                    <option value="DHL Segro">DHL Segro</option>
-                    <option value="DHL Ryton">DHL Ryton</option>
-                    <option value="Nuneaton">Nuneaton</option>
-                    <option value="Rugby">Rugby</option>
-                </select>
-            </div>
-            <button class="btn btn-scan" onclick="openScanner()">📷 Open Barcode Scanner</button>
-        </div>
-
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Location</th>
-                        <th>Item Name</th>
-                        <th>Safety Min</th>
-                        <th>Safety Max</th>
-                        <th>Current Count</th>
-                        <th>Status</th>
-                        <th>Update Entry</th>
-                    </tr>
-                </thead>
-                <tbody id="stockTableBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- TAB 3: CONFIRM DELIVERIES -->
-    <div id="deliveries" class="tab-content">
-        <h2>Inbound Delivery Acceptance Dock</h2>
-        <p class="subtitle" style="margin-bottom:20px;">Acknowledge real-time physical arrivals at your locations to automatically increase local stock volumes.</p>
-        
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Assigned Dest</th>
-                        <th>Expected Vol</th>
-                        <th>Action Status</th>
-                    </tr>
-                </thead>
-                <tbody id="deliveryTableBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- TAB 4: AGGREGATE PROJECTIONS -->
-    <div id="projections" class="tab-content">
-        <h2>Chronological Aggregated Financial Forecasts</h2>
-        <p class="subtitle" style="margin-bottom:20px;">Calculated financial look-aheads extrapolating current pipeline order data patterns.</p>
-        
-        <div class="grid-4" style="grid-template-columns: repeat(3, 1fr);">
-            <div style="background:#111827; padding:20px; border-radius:8px; border: 1px solid #334155;">
-                <h3 style="color:#60a5fa;">Weekly Window (7 Days)</h3>
-                <hr style="border-color:#1e293b; margin:10px 0;">
-                <p>Est. Spend: <span id="wCost" class="text-red">£0.00</span></p>
-                <p>Est. Revenue: <span id="wRev" class="text-green">£0.00</span></p>
-                <p>Projected Margin: <span id="wProf" style="color:white; font-weight:bold;">£0.00</span></p>
-            </div>
-            <div style="background:#111827; padding:20px; border-radius:8px; border: 1px solid #334155;">
-                <h3 style="color:#c084fc;">Monthly Window (30 Days)</h3>
-                <hr style="border-color:#1e293b; margin:10px 0;">
-                <p>Est. Spend: <span id="mCost" class="text-red">£0.00</span></p>
-                <p>Est. Revenue: <span id="mRev" class="text-green">£0.00</span></p>
-                <p>Projected Margin: <span id="mProf" style="color:white; font-weight:bold;">£0.00</span></p>
-            </div>
-            <div style="background:#111827; padding:20px; border-radius:8px; border: 1px solid #334155;">
-                <h3 style="color:#34d399;">Yearly Window (365 Days)</h3>
-                <hr style="border-color:#1e293b; margin:10px 0;">
-                <p>Est. Spend: <span id="yCost" class="text-red">£0.00</span></p>
-                <p>Est. Revenue: <span id="yRev" class="text-green">£0.00</span></p>
-                <p>Projected Margin: <span id="yProf" style="color:white; font-weight:bold;">£0.00</span></p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Barcode</th>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Supplier</th>
+                            <th>Cost Price (£)</th>
+                            <th>Sell Price (£)</th>
+                            <th>Current Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryBody"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- TAB 5: PRINTABLE QR CODES -->
-    <div id="printables" class="tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;" class="no-print">
-            <div>
-                <h2>Printable Item Barcode & QR Sheet</h2>
-                <p class="subtitle">Scan these codes using the built-in app scanner or print them out for stock bin labels.</p>
+    <!-- 2. Create Customer Order Tab -->
+    <div id="orderCart" class="tab-content" style="display: none;">
+        <div class="card">
+            <h3>Sales Order Cart</h3>
+            <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                <select id="itemSelect" style="flex:1;"></select>
+                <input type="number" id="orderQty" value="1" min="1" style="width:80px;">
+                <button class="action-btn" onclick="addToCart()">Add to Order</button>
             </div>
-            <button class="btn btn-print" onclick="window.print()">🖨️ Print Labels / Save PDF</button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Supplier</th>
+                            <th>Qty</th>
+                            <th>Unit Cost (£)</th>
+                            <th>Unit Sell (£)</th>
+                            <th>Total Sell (£)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartBody"></tbody>
+                </table>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+                <h4>Total Order Value: <span id="cartTotal" style="color:var(--accent-green);">£0.00</span></h4>
+                <button class="action-btn" onclick="checkoutOrder()">Complete & Dispatch Order</button>
+            </div>
         </div>
+    </div>
 
-        <div id="qrGridContainer" class="qr-grid"></div>
+    <!-- 3. Inbound Delivery Dock Tab -->
+    <div id="deliveries" class="tab-content" style="display: none;">
+        <div class="card">
+            <h3>Inbound Shipments Receiving Dock</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delivery ID</th>
+                            <th>Supplier</th>
+                            <th>Manifest Item</th>
+                            <th>Expected Quantity</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deliveryBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Reorder Procurement Tab -->
+    <div id="procurement" class="tab-content" style="display: none;">
+        <div class="card">
+            <h3>Low Stock Reorder List</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Supplier</th>
+                            <th>Buy Cost (£)</th>
+                            <th>Current Level</th>
+                            <th>Recommended Reorder</th>
+                        </tr>
+                    </thead>
+                    <tbody id="procurementBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Spend & Forecast Reports Tab -->
+    <div id="reports" class="tab-content" style="display: none;">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; flex-wrap:wrap; gap:10px;">
+                <h3>Supplier Spend Analysis & Forecasting</h3>
+                <div>
+                    <button class="filter-btn active" onclick="updateReport('daily', this)">Daily Report</button>
+                    <button class="filter-btn" onclick="updateReport('weekly', this)">Weekly Report</button>
+                    <button class="filter-btn" onclick="updateReport('monthly', this)">Monthly Report</button>
+                </div>
+            </div>
+
+            <div class="grid-4">
+                <div class="metric-card">
+                    <div>JJ Food Service Spend</div>
+                    <div id="jjSpend" class="metric-value">£0.00</div>
+                </div>
+                <div class="metric-card">
+                    <div>Costco Spend</div>
+                    <div id="costcoSpend" class="metric-value">£0.00</div>
+                </div>
+                <div class="metric-card">
+                    <div>Total Baseline Spend</div>
+                    <div id="totalSpend" class="metric-value">£0.00</div>
+                </div>
+                <div class="metric-card">
+                    <div>Forecast Growth (+5%)</div>
+                    <div id="forecastSpend" class="metric-value" style="color:var(--accent-green);">£0.00</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Supplier</th>
+                            <th>Item Category</th>
+                            <th>Total Tracked Items</th>
+                            <th>Calculated Period Spend (£)</th>
+                            <th>Period Forecast (£)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- BARCODE SCANNER MODAL -->
-<div id="scannerModal" class="modal-overlay">
-    <div class="modal-box">
-        <h2>Live Barcode Scanner</h2>
-        <p class="subtitle" style="margin-bottom:15px;">Scan item barcode/QR code to update stock (+1 increment).</p>
-        
-        <div style="margin-bottom: 15px;">
-            <label>Scanning Location Target:</label>
-            <select id="scannerLocation">
-                <option value="Main Kitchen">Main Kitchen</option>
-                <option value="DHL Segro">DHL Segro</option>
-                <option value="DHL Ryton">DHL Ryton</option>
-                <option value="Nuneaton">Nuneaton</option>
-                <option value="Rugby">Rugby</option>
-            </select>
-        </div>
-
+<!-- Camera Barcode Modal -->
+<div id="scannerModal">
+    <div class="scanner-box">
+        <h3>Barcode Scanner</h3>
+        <p>Point camera at item barcode</p>
         <div id="reader"></div>
-        <div id="scanResult" style="margin-bottom: 15px; color: #38bdf8; font-weight: bold; min-height: 20px; text-align: center;"></div>
-
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="manualBarcode" placeholder="Or enter barcode / ID manually...">
-            <button class="btn" onclick="processBarcode(document.getElementById('manualBarcode').value)">Update</button>
-        </div>
-
-        <button class="btn btn-danger" style="width: 100%; margin-top: 15px;" onclick="closeScanner()">Close Scanner</button>
+        <button onclick="closeScanner()" style="margin-top:15px; background:#dc2626; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer;">Close</button>
     </div>
 </div>
 
 <script>
-    const baseIngredients = [
-        { id: "1", name: "4 Strips meal", sell: 6.50, min: 10, max: 50 },
-        { id: "2", name: "50-50 biscuits", sell: 1.20, min: 10, max: 50 },
-        { id: "3", name: "add meal", sell: 2.50, min: 10, max: 50 },
-        { id: "4", name: "Add meal", sell: 2.00, min: 10, max: 50 },
-        { id: "5", name: "Add Meal", sell: 2.00, min: 10, max: 50 },
-        { id: "6", name: "Americano", sell: 2.00, min: 10, max: 50 },
-        { id: "7", name: "Balconi", sell: 1.25, min: 10, max: 50 },
-        { id: "8", name: "Boost", sell: 1.00, min: 10, max: 50 },
-        { id: "9", name: "Boost bottle", sell: 1.00, min: 10, max: 50 },
-        { id: "10", name: "Bottles", sell: 1.75, min: 10, max: 50 },
-        { id: "11", name: "Bounty", sell: 1.25, min: 10, max: 50 },
-        { id: "12", name: "Bread Pakora", sell: 2.50, min: 10, max: 50 },
-        { id: "13", name: "Bueno kinder", sell: 1.25, min: 10, max: 50 },
-        { id: "14", name: "Cans", sell: 1.10, min: 10, max: 50 },
-        { id: "15", name: "Cappuccino", sell: 2.00, min: 10, max: 50 },
-        { id: "16", name: "Cheese Burger", sell: 4.00, min: 10, max: 50 },
-        { id: "17", name: "Cheese Omelette", sell: 5.60, min: 10, max: 50 },
-        { id: "18", name: "Chicken Biryani", sell: 5.00, min: 10, max: 50 },
-        { id: "19", name: "Chicken Burger", sell: 4.00, min: 10, max: 50 },
-        { id: "20", name: "Chicken Curry", sell: 4.00, min: 10, max: 50 },
-        { id: "21", name: "Chicken Mayo", sell: 5.00, min: 10, max: 50 },
-        { id: "22", name: "Chicken pakora", sell: 2.00, min: 10, max: 50 },
-        { id: "23", name: "Chicken samosa", sell: 3.50, min: 10, max: 50 },
-        { id: "24", name: "Chicken wings & chips", sell: 7.50, min: 10, max: 50 },
-        { id: "25", name: "Chicken wrap", sell: 5.00, min: 10, max: 50 },
-        { id: "26", name: "Chilli chicken wrap", sell: 5.00, min: 10, max: 50 },
-        { id: "27", name: "Chilly Con Carne", sell: 8.00, min: 10, max: 50 },
-        { id: "28", name: "Chips", sell: 2.50, min: 10, max: 50 },
-        { id: "29", name: "cookies", sell: 1.50, min: 10, max: 50 },
-        { id: "30", name: "Donuts", sell: 2.00, min: 10, max: 50 },
-        { id: "31", name: "Double cheese burger", sell: 6.00, min: 10, max: 50 },
-        { id: "32", name: "Double expresso", sell: 2.00, min: 10, max: 50 },
-        { id: "33", name: "Egg Bap", sell: 4.00, min: 10, max: 50 },
-        { id: "34", name: "Eglish Breakfast(Large)", sell: 6.60, min: 10, max: 50 },
-        { id: "35", name: "English Breakfast (small)", sell: 5.00, min: 10, max: 50 },
-        { id: "36", name: "Extra Gums", sell: 1.00, min: 10, max: 50 },
-        { id: "37", name: "Extra refreshment gum", sell: 1.20, min: 10, max: 50 },
-        { id: "38", name: "Fish&chips", sell: 5.00, min: 10, max: 50 },
-        { id: "39", name: "Five star choclate", sell: 1.25, min: 10, max: 50 },
-        { id: "40", name: "Fruit-Tella", sell: 1.50, min: 10, max: 50 },
-        { id: "41", name: "Greek yoghurt", sell: 1.00, min: 10, max: 50 },
-        { id: "42", name: "Green monster", sell: 2.00, min: 10, max: 50 },
-        { id: "43", name: "Grilled chicken", sell: 7.50, min: 10, max: 50 },
-        { id: "44", name: "Haldiram namkeen", sell: 2.50, min: 10, max: 50 },
-        { id: "45", name: "Jalebi", sell: 2.00, min: 10, max: 50 },
-        { id: "46", name: "Karak Chai", sell: 1.75, min: 10, max: 50 },
-        { id: "47", name: "Kebab Roll", sell: 3.00, min: 10, max: 50 },
-        { id: "48", name: "Kitkat", sell: 1.25, min: 10, max: 50 },
-        { id: "49", name: "Latte", sell: 2.00, min: 10, max: 50 },
-        { id: "50", name: "Lays & Kurkre", sell: 1.50, min: 10, max: 50 },
-        { id: "51", name: "Lemonade monster", sell: 2.00, min: 10, max: 50 },
-        { id: "52", name: "Lucozade", sell: 1.60, min: 10, max: 50 },
-        { id: "53", name: "Maltes", sell: 2.00, min: 10, max: 50 },
-        { id: "54", name: "Mango monsters", sell: 2.00, min: 10, max: 50 },
-        { id: "55", name: "Milk Botle for Hub", sell: 1.50, min: 10, max: 50 },
-        { id: "56", name: "Monster punch", sell: 2.00, min: 10, max: 50 },
-        { id: "57", name: "Monsters", sell: 2.00, min: 10, max: 50 },
-        { id: "58", name: "Mr.Tom", sell: 1.00, min: 10, max: 50 },
-        { id: "59", name: "Muffins", sell: 2.00, min: 10, max: 50 },
-        { id: "60", name: "Noodles spring roll", sell: 2.50, min: 10, max: 50 },
-        { id: "61", name: "Onion rings", sell: 2.00, min: 10, max: 50 },
-        { id: "62", name: "Oreo", sell: 1.20, min: 10, max: 50 },
-        { id: "63", name: "Original monsters", sell: 2.00, min: 10, max: 50 },
-        { id: "64", name: "Pakora(Veg)", sell: 2.50, min: 10, max: 50 },
-        { id: "65", name: "PARLE G", sell: 1.20, min: 10, max: 50 },
-        { id: "66", name: "Pasta Bologneze(Beef)", sell: 7.50, min: 10, max: 50 },
-        { id: "67", name: "Pasta primavera", sell: 7.50, min: 10, max: 50 },
-        { id: "68", name: "Peach monster", sell: 2.00, min: 10, max: 50 },
-        { id: "69", name: "Protien bar", sell: 1.00, min: 10, max: 50 },
-        { id: "70", name: "RedBull", sell: 2.20, min: 10, max: 50 },
-        { id: "71", name: "Ring donuts", sell: 1.50, min: 10, max: 50 },
-        { id: "72", name: "Samosa", sell: 2.50, min: 10, max: 50 },
-        { id: "73", name: "Samosa chat", sell: 5.50, min: 10, max: 50 },
-        { id: "74", name: "Shawarma Veg/Chicken", sell: 6.00, min: 10, max: 50 },
-        { id: "75", name: "Single / spring roll, samosa", sell: 1.25, min: 10, max: 50 },
-        { id: "76", name: "Single expresso", sell: 1.60, min: 10, max: 50 },
-        { id: "77", name: "Skittles", sell: 1.00, min: 10, max: 50 },
-        { id: "78", name: "Snickers", sell: 1.25, min: 10, max: 50 },
-        { id: "79", name: "Southern fried chicken", sell: 5.00, min: 10, max: 50 },
-        { id: "80", name: "Spicy American Chicken", sell: 5.00, min: 10, max: 50 },
-        { id: "81", name: "Spicy Cheese", sell: 5.00, min: 10, max: 50 },
-        { id: "82", name: "Spring rolls", sell: 2.50, min: 10, max: 50 },
-        { id: "83", name: "Starbucks bottle", sell: 2.50, min: 10, max: 50 },
-        { id: "84", name: "Strawberry pink monster", sell: 2.00, min: 10, max: 50 },
-        { id: "85", name: "tango strawberry", sell: 1.50, min: 10, max: 50 },
-        { id: "86", name: "Tropical orange monster", sell: 2.00, min: 10, max: 50 },
-        { id: "87", name: "Veg rice", sell: 5.00, min: 10, max: 50 },
-        { id: "88", name: "Veg wrap", sell: 5.00, min: 10, max: 50 },
-        { id: "89", name: "Vegetables pizza slice", sell: 2.00, min: 10, max: 50 },
-        { id: "90", name: "Veggie Burgers", sell: 4.00, min: 10, max: 50 },
-        { id: "91", name: "Vegi Pasta", sell: 4.50, min: 10, max: 50 },
-        { id: "92", name: "Water Bottle", sell: 1.00, min: 10, max: 50 },
-        { id: "93", name: "Werthers Originals", sell: 1.50, min: 10, max: 50 },
-        { id: "94", name: "Wrap Chicken (Cheese)", sell: 7.50, min: 10, max: 50 },
-        { id: "95", name: "Zero white monster", sell: 2.00, min: 10, max: 50 }
+    // System Master Stock Database with JJ Food Service and Costco Mapped
+    const inventory = [
+        { "id": "1", "barcode": "501000100", "name": "Fanta Orange", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 69, "unit": "Bottles" },
+        { "id": "2", "barcode": "501000101", "name": "Coca-Cola Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 68, "unit": "Bottles" },
+        { "id": "3", "barcode": "501000102", "name": "Water", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 55, "unit": "Bottles" },
+        { "id": "4", "barcode": "501000103", "name": "Mountain Dew", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 49, "unit": "Bottles" },
+        { "id": "5", "barcode": "501000104", "name": "Sprite", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 41, "unit": "Bottles" },
+        { "id": "6", "barcode": "501000105", "name": "Pepsi Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 34, "unit": "Bottles" },
+        { "id": "7", "barcode": "501000106", "name": "Boost Energy Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 28, "unit": "Bottles" },
+        { "id": "8", "barcode": "501000107", "name": "Lipton Ice Tea (Peach)", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 25, "unit": "Bottles" },
+        { "id": "9", "barcode": "501000108", "name": "Fanta Fruit Twist", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 24, "unit": "Bottles" },
+        { "id": "10", "barcode": "501000109", "name": "Coke Zero", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 24, "unit": "Bottles" },
+        { "id": "11", "barcode": "501000110", "name": "Diet Coke", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 24, "unit": "Bottles" },
+        { "id": "12", "barcode": "501000111", "name": "Oasis Summer Fruits", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 20, "unit": "Bottles" },
+        { "id": "13", "barcode": "501000112", "name": "Pepsi Max", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 15, "unit": "Bottles" },
+        { "id": "14", "barcode": "501000113", "name": "Oasis Citrus Punch", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 12, "unit": "Bottles" },
+        { "id": "15", "barcode": "501000114", "name": "Boost Red Berry", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "stock": 8, "unit": "Bottles" },
+        { "id": "16", "barcode": "501000115", "name": "Coca-Cola Original Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 204, "unit": "Cans" },
+        { "id": "17", "barcode": "501000116", "name": "Sprite Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 65, "unit": "Cans" },
+        { "id": "18", "barcode": "501000117", "name": "Pepsi Original Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 53, "unit": "Cans" },
+        { "id": "19", "barcode": "501000118", "name": "Coke Zero Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 53, "unit": "Cans" },
+        { "id": "20", "barcode": "501000119", "name": "7Up Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 36, "unit": "Cans" },
+        { "id": "21", "barcode": "501000120", "name": "Fanta Lemon Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 33, "unit": "Cans" },
+        { "id": "22", "barcode": "501000121", "name": "Tango Apple Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 32, "unit": "Cans" },
+        { "id": "23", "barcode": "501000122", "name": "Fanta Orange Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 29, "unit": "Cans" },
+        { "id": "24", "barcode": "501000123", "name": "Pepsi Max Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 27, "unit": "Cans" },
+        { "id": "25", "barcode": "501000124", "name": "Fanta Fruit Twist Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 24, "unit": "Cans" },
+        { "id": "26", "barcode": "501000125", "name": "Lipton Peach Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 16, "unit": "Cans" },
+        { "id": "27", "barcode": "501000126", "name": "Rio Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 13, "unit": "Cans" },
+        { "id": "28", "barcode": "501000127", "name": "Dr Pepper Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 12, "unit": "Cans" },
+        { "id": "29", "barcode": "501000128", "name": "Coca-Cola Cherry Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 10, "unit": "Cans" },
+        { "id": "30", "barcode": "501000129", "name": "Diet Coke Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 7, "unit": "Cans" },
+        { "id": "31", "barcode": "501000130", "name": "Lipton Lemon Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 5, "unit": "Cans" },
+        { "id": "32", "barcode": "501000131", "name": "Rubicon Can", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "stock": 3, "unit": "Cans" },
+        { "id": "33", "barcode": "501000132", "name": "Monster Pipeline Punch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 98, "unit": "Cans" },
+        { "id": "34", "barcode": "501000133", "name": "Monster Original", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 82, "unit": "Cans" },
+        { "id": "35", "barcode": "501000134", "name": "Monster Ultra White", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 67, "unit": "Cans" },
+        { "id": "36", "barcode": "501000135", "name": "Red Bull", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 52, "unit": "Cans" },
+        { "id": "37", "barcode": "501000136", "name": "Monster Mango Loco", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 48, "unit": "Cans" },
+        { "id": "38", "barcode": "501000137", "name": "Monster Ultra Strawberry", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 40, "unit": "Cans" },
+        { "id": "39", "barcode": "501000138", "name": "Monster Aussie Lemonade", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 12, "unit": "Cans" },
+        { "id": "40", "barcode": "501000139", "name": "Monster Ultra Peachy Keen", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 12, "unit": "Cans" },
+        { "id": "41", "barcode": "501000140", "name": "Monster Monarch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 10, "unit": "Cans" },
+        { "id": "42", "barcode": "501000141", "name": "Monster Tropical", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 10, "unit": "Cans" },
+        { "id": "43", "barcode": "501000142", "name": "Monster Rio Punch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "stock": 0, "unit": "Cans" },
+        { "id": "44", "barcode": "501000143", "name": "Cheese Slices", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 187, "unit": "Slices" },
+        { "id": "45", "barcode": "501000144", "name": "Veggie Burger", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 70, "unit": "Pieces" },
+        { "id": "46", "barcode": "501000145", "name": "Chicken Strips", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 60, "unit": "Pieces" },
+        { "id": "47", "barcode": "501000146", "name": "Seeded Burger Buns", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 60, "unit": "Pieces" },
+        { "id": "48", "barcode": "501000147", "name": "Beef Burger", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 54, "unit": "Pieces" },
+        { "id": "49", "barcode": "501000148", "name": "Chips", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 35, "unit": "Packs" },
+        { "id": "50", "barcode": "501000149", "name": "Wraps", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 33, "unit": "Pieces" },
+        { "id": "51", "barcode": "501000150", "name": "Chicken Fillets", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "stock": 17, "unit": "Pieces" },
+        { "id": "52", "barcode": "501000151", "name": "Tea Bags", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 430, "unit": "Tea Bags" },
+        { "id": "53", "barcode": "501000152", "name": "Sugar (10kg)", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 20, "unit": "kg" },
+        { "id": "54", "barcode": "501000153", "name": "Sauce Dips", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 100, "unit": "Dips" },
+        { "id": "55", "barcode": "501000154", "name": "Burger Sauce", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 2, "unit": "Bottles" },
+        { "id": "56", "barcode": "501000155", "name": "Sweet Chilli Sauce", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 2, "unit": "Bottles" },
+        { "id": "57", "barcode": "501000156", "name": "Mayonnaise", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "stock": 1, "unit": "Bottle" },
+        { "id": "58", "barcode": "501000157", "name": "Spoons", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 500, "unit": "Pieces" },
+        { "id": "59", "barcode": "501000158", "name": "Forks", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 200, "unit": "Pieces" },
+        { "id": "60", "barcode": "501000159", "name": "Wrap Paper", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 30, "unit": "Pieces" },
+        { "id": "61", "barcode": "501000160", "name": "Meal Boxes", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 15, "unit": "Pieces" },
+        { "id": "62", "barcode": "501000161", "name": "Blue Roll", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 16, "unit": "Rolls" },
+        { "id": "63", "barcode": "501000162", "name": "Cooking Oil (5L)", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 18, "unit": "Litres" },
+        { "id": "64", "barcode": "501000163", "name": "Fairy Liquid", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 2, "unit": "Bottles" },
+        { "id": "65", "barcode": "501000164", "name": "White Bags", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 3, "unit": "Packs" },
+        { "id": "66", "barcode": "501000165", "name": "Gloves", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 1, "unit": "Box" },
+        { "id": "67", "barcode": "501000166", "name": "Small Cups", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "stock": 1, "unit": "Box" },
+        { "id": "68", "barcode": "501000167", "name": "Onions", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "stock": 10, "unit": "Pieces" },
+        { "id": "69", "barcode": "501000168", "name": "Lettuce", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "stock": 4, "unit": "Pieces" },
+        { "id": "70", "barcode": "501000169", "name": "Tomatoes", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "stock": 3, "unit": "Pieces" },
+        { "id": "71", "barcode": "501000170", "name": "Extra Gum", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 126, "unit": "Pieces" },
+        { "id": "72", "barcode": "501000171", "name": "Werther's Original", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 120, "unit": "Pieces" },
+        { "id": "73", "barcode": "501000172", "name": "Parle", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 95, "unit": "Pieces" },
+        { "id": "74", "barcode": "501000173", "name": "Bounty", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 57, "unit": "Pieces" },
+        { "id": "75", "barcode": "501000174", "name": "Snickers", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 24, "unit": "Pieces" },
+        { "id": "76", "barcode": "501000175", "name": "5 Star", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 23, "unit": "Pieces" },
+        { "id": "77", "barcode": "501000176", "name": "KitKat", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 22, "unit": "Pieces" },
+        { "id": "78", "barcode": "501000177", "name": "Kinder Bueno", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 16, "unit": "Pieces" },
+        { "id": "79", "barcode": "501000178", "name": "Mr Tom", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 14, "unit": "Pieces" },
+        { "id": "80", "barcode": "501000179", "name": "Fruittella", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "stock": 4, "unit": "Pieces" }
     ];
 
-    baseIngredients.forEach(item => {
-        item.cost = Math.round((item.sell * 0.35) * 100) / 100;
-    });
-
-    const locations = ["Main Kitchen", "DHL Segro", "DHL Ryton", "Nuneaton", "Rugby"];
-    let inventoryState = [];
-    let currentManifest = [];
-    let html5QrCode = null;
-
-    const incomingInvoices = [
-        { id: "36", name: "Extra Gums (Wrigleys Strawberry/White)", qty: 4, costUnit: 10.99, sellUnit: 30.00, destination: "Main Kitchen" },
-        { id: "11", name: "Bounty Bars Case", qty: 2, costUnit: 10.99, sellUnit: 18.00, destination: "Main Kitchen" },
-        { id: "54", name: "Mango monsters (Mango Loco Case)", qty: 3, costUnit: 19.99, sellUnit: 32.94, destination: "Main Kitchen" },
-        { id: "56", name: "Monster punch (Pipeline/Rio Case)", qty: 6, costUnit: 9.29, sellUnit: 21.00, destination: "Main Kitchen" },
-        { id: "84", name: "Strawberry pink monster (Ultra Case)", qty: 3, costUnit: 8.29, sellUnit: 18.60, destination: "Main Kitchen" },
-        { id: "57", name: "Monsters (Monarch/Khaotic Case)", qty: 5, costUnit: 9.29, sellUnit: 21.00, destination: "Main Kitchen" },
-        { id: "86", name: "Tropical orange monster (Aussie Case)", qty: 2, costUnit: 9.29, sellUnit: 21.00, destination: "Main Kitchen" },
-        { id: "63", name: "Original monsters (Green Case)", qty: 3, costUnit: 19.99, sellUnit: 32.94, destination: "Main Kitchen" },
-        { id: "92", name: "Water Bottle (Gill Beck Still Water)", qty: 5, costUnit: 2.99, sellUnit: 6.00, destination: "Main Kitchen" },
-        { id: "46", name: "Karak Chai (PG Tips Box/Tea Base Equivalent)", qty: 2, costUnit: 13.49, sellUnit: 19.74, destination: "Main Kitchen" },
-        { id: "93", name: "Werthers Originals Case", qty: 3, costUnit: 9.99, sellUnit: 18.00, destination: "Main Kitchen" },
-        { id: "40", name: "Fruit-Tella Sticks Case", qty: 1, costUnit: 18.25, sellUnit: 31.60, destination: "Main Kitchen" }
+    let cart = [];
+    let inboundDeliveries = [
+        { id: "DEL-901", supplier: "JJ Food Service", item: "Cooking Oil (5L)", qty: 10, status: "Pending" },
+        { id: "DEL-902", supplier: "Costco", item: "Coca-Cola Original Can", qty: 15, status: "Pending" },
+        { id: "DEL-903", supplier: "JJ Food Service", item: "Seeded Burger Buns", qty: 20, status: "Pending" }
     ];
 
-    function initializeSystem() {
-        document.getElementById('deliveryDate').value = "2026-03-22";
+    let html5QrcodeScanner = null;
 
-        locations.forEach(loc => {
-            baseIngredients.forEach(ing => {
-                inventoryState.push({
-                    location: loc,
-                    id: ing.id,
-                    name: ing.name,
-                    min: ing.min,
-                    max: ing.max,
-                    current: Math.floor(Math.random() * (ing.max - ing.min + 1)) + ing.min
-                });
-            });
-        });
+    function renderInventory(data = inventory) {
+        const body = document.getElementById('inventoryBody');
+        body.innerHTML = data.map(item => `
+            <tr>
+                <td>#${item.id}</td>
+                <td><code>${item.barcode}</code></td>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.category}</td>
+                <td><span class="supplier-tag ${item.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${item.supplier}</span></td>
+                <td>£${item.cost.toFixed(2)}</td>
+                <td>£${item.sell.toFixed(2)}</td>
+                <td><strong>${item.stock}</strong> ${item.unit}</td>
+            </tr>
+        `).join('');
 
-        const dropdown = document.getElementById('ingredientDropdown');
-        baseIngredients.forEach(ing => {
-            let opt = document.createElement('option');
-            opt.value = ing.id;
-            opt.innerText = `${ing.name} (Sell: £${ing.sell.toFixed(2)})`;
-            dropdown.appendChild(opt);
-        });
+        // Populate dropdown for ordering
+        const select = document.getElementById('itemSelect');
+        select.innerHTML = inventory.map(item => `<option value="${item.id}">${item.name} (${item.supplier}) - Sell £${item.sell.toFixed(2)}</option>`).join('');
+    }
 
-        incomingInvoices.forEach(inv => {
-            const totalCost = inv.costUnit * inv.qty;
-            const totalRev = inv.sellUnit * inv.qty;
-            currentManifest.push({
-                id: inv.id,
-                name: inv.name,
-                qty: inv.qty,
-                destination: inv.destination,
-                costUnit: inv.costUnit,
-                sellUnit: inv.sellUnit,
-                totalCost: totalCost,
-                totalRev: totalRev,
-                netYield: totalRev - totalCost,
-                status: 'Pending Intake'
-            });
-        });
-
-        renderAll();
-        renderQRCodes();
+    function filterInventory() {
+        const val = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = inventory.filter(i => i.name.toLowerCase().includes(val) || i.category.toLowerCase().includes(val) || i.supplier.toLowerCase().includes(val));
+        renderInventory(filtered);
     }
 
     function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        if (event && event.currentTarget) {
-            event.currentTarget.classList.add('active');
-        }
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).style.display = 'block';
+        event.target.classList.add('active');
+
+        if (tabId === 'deliveries') renderDeliveries();
+        if (tabId === 'procurement') renderProcurement();
+        if (tabId === 'reports') updateReport('daily');
     }
 
-    function renderQRCodes() {
-        const qrContainer = document.getElementById('qrGridContainer');
-        qrContainer.innerHTML = "";
+    /* Sales Order Cart Logic */
+    function addToCart() {
+        const itemId = document.getElementById('itemSelect').value;
+        const qty = parseInt(document.getElementById('orderQty').value);
+        const item = inventory.find(i => i.id === itemId);
 
-        baseIngredients.forEach(item => {
-            // Generates an external QR code image via quick QR API
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(item.id)}`;
-            
-            const card = document.createElement('div');
-            card.className = 'qr-card';
-            card.innerHTML = `
-                <img src="${qrUrl}" alt="QR Code ${item.id}">
-                <div class="item-title">${item.name}</div>
-                <div class="item-id">ID: ${item.id}</div>
-            `;
-            qrContainer.appendChild(card);
-        });
-    }
-
-    function addItemToOrder() {
-        const itemSelect = document.getElementById('ingredientDropdown').value;
-        const qty = parseInt(document.getElementById('orderQty').value) || 0;
-        const dest = document.getElementById('itemDestination').value;
-
-        if (!itemSelect || qty <= 0) {
-            alert("Verify selected items and specified quantity magnitudes.");
-            return;
-        }
-
-        const template = baseIngredients.find(i => i.id === itemSelect);
-        const totalCost = template.cost * qty;
-        const totalRev = template.sell * qty;
-        const netYield = totalRev - totalCost;
-
-        currentManifest.push({
-            id: template.id,
-            name: template.name,
-            qty: qty,
-            destination: dest,
-            costUnit: template.cost,
-            sellUnit: template.sell,
-            totalCost: totalCost,
-            totalRev: totalRev,
-            netYield: netYield,
-            status: 'Pending Intake'
-        });
-
-        renderAll();
-    }
-
-    function removeManifestItem(idx) {
-        currentManifest.splice(idx, 1);
-        renderAll();
-    }
-
-    function completeDeliveryInbound(idx) {
-        const item = currentManifest[idx];
-        let stockRecord = inventoryState.find(s => s.location === item.destination && s.id === item.id);
-        if (stockRecord) {
-            stockRecord.current += (item.qty * 12);
-        }
-        currentManifest.splice(idx, 1);
-        alert(`Stock updated! Delivery accepted at ${item.destination}.`);
-        renderAll();
-    }
-
-    function updatePhysicalStock(loc, id, newVol) {
-        let stockRecord = inventoryState.find(s => s.location === loc && s.id === id);
-        if (stockRecord) {
-            stockRecord.current = parseInt(newVol) || 0;
-            renderStockTable();
-            calculateAggregatedForecasts(); 
-        }
-    }
-
-    /* BARCODE SCANNING SYSTEM LOGIC */
-    function openScanner(targetLocation = null) {
-        if (targetLocation) {
-            document.getElementById('scannerLocation').value = targetLocation;
+        const existing = cart.find(c => c.id === itemId);
+        if (existing) {
+            existing.qty += qty;
         } else {
-            const currentFilter = document.getElementById('stockLocationFilter').value;
-            if (currentFilter !== 'all') {
-                document.getElementById('scannerLocation').value = currentFilter;
+            cart.push({ ...item, qty: qty });
+        }
+        renderCart();
+    }
+
+    function removeFromCart(idx) {
+        cart.splice(idx, 1);
+        renderCart();
+    }
+
+    function renderCart() {
+        const body = document.getElementById('cartBody');
+        let total = 0;
+        body.innerHTML = cart.map((item, idx) => {
+            const lineTotal = item.sell * item.qty;
+            total += lineTotal;
+            return `
+                <tr>
+                    <td>${item.name}</td>
+                    <td><span class="supplier-tag ${item.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${item.supplier}</span></td>
+                    <td>${item.qty}</td>
+                    <td>£${item.cost.toFixed(2)}</td>
+                    <td>£${item.sell.toFixed(2)}</td>
+                    <td>£${lineTotal.toFixed(2)}</td>
+                    <td><button style="background:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="removeFromCart(${idx})">Remove</button></td>
+                </tr>
+            `;
+        }).join('');
+        document.getElementById('cartTotal').innerText = `£${total.toFixed(2)}`;
+    }
+
+    function checkoutOrder() {
+        if (cart.length === 0) return alert('Cart is empty!');
+        
+        // Deduct inventory
+        cart.forEach(cartItem => {
+            const stockItem = inventory.find(i => i.id === cartItem.id);
+            if (stockItem) stockItem.stock = Math.max(0, stockItem.stock - cartItem.qty);
+        });
+
+        alert('Order completed successfully! Inventory updated.');
+        cart = [];
+        renderCart();
+        renderInventory();
+    }
+
+    /* Deliveries Dock Logic */
+    function renderDeliveries() {
+        const body = document.getElementById('deliveryBody');
+        body.innerHTML = inboundDeliveries.map((del, idx) => `
+            <tr>
+                <td>${del.id}</td>
+                <td><span class="supplier-tag ${del.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${del.supplier}</span></td>
+                <td><strong>${del.item}</strong></td>
+                <td>${del.qty} Units</td>
+                <td><span style="color:${del.status === 'Received' ? '#4ade80' : '#facc15'}; font-weight:bold;">${del.status}</span></td>
+                <td>
+                    ${del.status === 'Pending' ? `<button class="action-btn" onclick="receiveDelivery(${idx})">Receive Stock</button>` : 'Complete'}
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function receiveDelivery(idx) {
+        const del = inboundDeliveries[idx];
+        del.status = "Received";
+
+        // Find item and add stock
+        const item = inventory.find(i => i.name === del.item);
+        if (item) item.stock += del.qty;
+
+        renderDeliveries();
+        renderInventory();
+    }
+
+    /* Low Stock Procurement */
+    function renderProcurement() {
+        const lowStock = inventory.filter(i => i.stock < 15);
+        const body = document.getElementById('procurementBody');
+        body.innerHTML = lowStock.map(item => `
+            <tr>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.category}</td>
+                <td><span class="supplier-tag ${item.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${item.supplier}</span></td>
+                <td>£${item.cost.toFixed(2)}</td>
+                <td style="color:#ef4444; font-weight:bold;">${item.stock} ${item.unit}</td>
+                <td><strong>+${50 - item.stock} ${item.unit}</strong></td>
+            </tr>
+        `).join('');
+    }
+
+    /* Spend & Forecasting Engine */
+    function updateReport(timeframe, btnEl) {
+        if (btnEl) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+        }
+
+        let jjTotal = 0;
+        let costcoTotal = 0;
+        const aggregated = {};
+
+        inventory.forEach(item => {
+            const key = `${item.supplier} - ${item.category}`;
+            if (!aggregated[key]) {
+                aggregated[key] = { supplier: item.supplier, category: item.category, count: 0, cost: 0 };
             }
-        }
+            aggregated[key].count += 1;
+            aggregated[key].cost += item.cost;
+            
+            if (item.supplier === 'JJ Food Service') jjTotal += item.cost;
+            if (item.supplier === 'Costco') costcoTotal += item.cost;
+        });
 
-        document.getElementById('scannerModal').classList.add('active');
-        document.getElementById('scanResult').innerText = "Initializing camera...";
+        // Timeframe Scale Multiplier (Daily, Weekly, Monthly)
+        const scaleMap = { 'daily': 1, 'weekly': 5, 'monthly': 20 };
+        const mult = scaleMap[timeframe];
 
-        if (!html5QrCode) {
-            html5QrCode = new Html5Qrcode("reader");
-        }
+        const finalJJ = jjTotal * mult;
+        const finalCostco = costcoTotal * mult;
+        const total = finalJJ + finalCostco;
 
-        html5QrCode.start(
-            { facingMode: "environment" }, 
+        document.getElementById('jjSpend').innerText = `£${finalJJ.toFixed(2)}`;
+        document.getElementById('costcoSpend').innerText = `£${finalCostco.toFixed(2)}`;
+        document.getElementById('totalSpend').innerText = `£${total.toFixed(2)}`;
+        document.getElementById('forecastSpend').innerText = `£${(total * 1.05).toFixed(2)}`;
+
+        const tbody = document.getElementById('reportTableBody');
+        tbody.innerHTML = Object.values(aggregated).map(row => {
+            let rowCost = row.cost * mult;
+            return `
+                <tr>
+                    <td><span class="supplier-tag ${row.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${row.supplier}</span></td>
+                    <td>${row.category}</td>
+                    <td>${row.count} Items</td>
+                    <td>£${rowCost.toFixed(2)}</td>
+                    <td style="color:var(--accent-green);">£${(rowCost * 1.05).toFixed(2)}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    /* Camera Barcode Scanner */
+    function openScanner() {
+        document.getElementById('scannerModal').style.display = 'flex';
+        html5QrcodeScanner = new Html5Qrcode("reader");
+        html5QrcodeScanner.start(
+            { facingMode: "environment" },
             { fps: 10, qrbox: { width: 250, height: 250 } },
             (decodedText) => {
-                processBarcode(decodedText);
-            },
-            () => {}
-        ).then(() => {
-            document.getElementById('scanResult').innerText = "Ready! Point camera at barcode.";
-        }).catch(err => {
-            document.getElementById('scanResult').innerText = "Camera access error or unsupported device.";
-        });
+                closeScanner();
+                const found = inventory.find(i => i.barcode === decodedText || i.id === decodedText);
+                if (found) {
+                    alert(`Scanned: ${found.name}\nSupplier: ${found.supplier}\nStock: ${found.stock}`);
+                    document.getElementById('searchInput').value = found.name;
+                    filterInventory();
+                } else {
+                    alert(`Barcode ${decodedText} not found in database.`);
+                }
+            }
+        ).catch(err => console.log(err));
     }
 
     function closeScanner() {
-        if (html5QrCode && html5QrCode.isScanning) {
-            html5QrCode.stop().then(() => {
-                document.getElementById('scannerModal').classList.remove('active');
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.stop().then(() => {
+                document.getElementById('scannerModal').style.display = 'none';
             });
         } else {
-            document.getElementById('scannerModal').classList.remove('active');
+            document.getElementById('scannerModal').style.display = 'none';
         }
     }
 
-    function playBeep() {
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            osc.type = "sine";
-            osc.frequency.value = 800;
-            osc.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.15);
-        } catch (e) {}
-    }
-
-    function processBarcode(scannedCode) {
-        if (!scannedCode) return;
-
-        const targetLoc = document.getElementById('scannerLocation').value;
-        const cleanCode = scannedCode.trim().toLowerCase();
-
-        // Search item by ID or matching Name substring
-        let matchedIng = baseIngredients.find(i => i.id === cleanCode || i.name.toLowerCase().includes(cleanCode));
-
-        if (matchedIng) {
-            let stockRecord = inventoryState.find(s => s.location === targetLoc && s.id === matchedIng.id);
-            if (stockRecord) {
-                stockRecord.current += 1;
-                playBeep();
-                document.getElementById('scanResult').innerText = `✅ Updated: ${matchedIng.name} @ ${targetLoc} (New Qty: ${stockRecord.current})`;
-                renderStockTable();
-                calculateAggregatedForecasts();
-            }
-        } else {
-            document.getElementById('scanResult').innerText = `❌ Item barcode/ID "${scannedCode}" not recognized.`;
-        }
-    }
-
-    function renderAll() {
-        renderProcurementTable();
-        renderStockTable();
-        renderDeliveryDock();
-        calculateAggregatedForecasts();
-    }
-
-    function renderProcurementTable() {
-        const tbody = document.getElementById('orderTableBody');
-        tbody.innerHTML = "";
-        let aggC = 0, aggR = 0, aggP = 0;
-
-        currentManifest.forEach((item, idx) => {
-            aggC += item.totalCost;
-            aggR += item.totalRev;
-            aggP += item.netYield;
-
-            tbody.innerHTML += `<tr>
-                <td><strong>${item.name}</strong></td>
-                <td><span class="badge ${item.destination === 'Main Kitchen' ? 'badge-depot' : 'badge-hub'}">${item.destination}</span></td>
-                <td>${item.qty}</td>
-                <td>£${item.totalCost.toFixed(2)}</td>
-                <td>£${item.totalRev.toFixed(2)}</td>
-                <td class="text-green">£${item.netYield.toFixed(2)}</td>
-                <td><button type="button" class="btn btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="removeManifestItem(${idx})">✕</button></td>
-            </tr>`;
-        });
-
-        document.getElementById('displayTotalCost').innerText = `£${aggC.toFixed(2)}`;
-        document.getElementById('displayTotalRev').innerText = `£${aggR.toFixed(2)}`;
-        document.getElementById('displayTotalProfit').innerText = `£${aggP.toFixed(2)}`;
-    }
-
-    function renderStockTable() {
-        const tbody = document.getElementById('stockTableBody');
-        const filter = document.getElementById('stockLocationFilter').value;
-        tbody.innerHTML = "";
-
-        inventoryState.forEach(row => {
-            if (filter !== 'all' && row.location !== filter) return;
-
-            const isLow = row.current < row.min;
-            const statusBadge = isLow ? `<span class="badge badge-alert">LOW STOCK REORDER</span>` : `<span class="badge badge-ok">OK</span>`;
-            
-            tbody.innerHTML += `<tr>
-                <td><strong>${row.location}</strong></td>
-                <td>${row.name}</td>
-                <td>${row.min}</td>
-                <td>${row.max}</td>
-                <td style="${isLow ? 'color:#f87171; font-weight:bold;' : ''}">${row.current}</td>
-                <td>${statusBadge}</td>
-                <td style="display: flex; gap: 5px;">
-                    <input type="number" class="stock-input" value="${row.current}" onchange="updatePhysicalStock('${row.location}', '${row.id}', this.value)">
-                    <button class="btn btn-scan" style="padding:4px 8px; font-size:0.75rem;" onclick="openScanner('${row.location}')">📷 Scan</button>
-                </td>
-            </tr>`;
-        });
-    }
-
-    function renderDeliveryDock() {
-        const tbody = document.getElementById('deliveryTableBody');
-        tbody.innerHTML = "";
-
-        if (currentManifest.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">No outbound orders currently pending in transport pipelines.</td></tr>`;
-            return;
-        }
-
-        currentManifest.forEach((item, idx) => {
-            tbody.innerHTML += `<tr>
-                <td><strong>${item.name}</strong></td>
-                <td><span class="badge badge-hub">${item.destination}</span></td>
-                <td>${item.qty} cases expected</td>
-                <td><button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="completeDeliveryInbound(${idx})">Confirm Received & Update Stock</button></td>
-            </tr>`;
-        });
-    }
-
-    function calculateAggregatedForecasts() {
-        let weeklyCost = 0, weeklyRev = 0;
-
-        currentManifest.forEach(item => {
-            weeklyCost += item.totalCost;
-            weeklyRev += item.totalRev;
-        });
-
-        const mCost = weeklyCost * 4.285;
-        const mRev = weeklyRev * 4.285;
-        const yCost = weeklyCost * 52.14;
-        const yRev = weeklyRev * 52.14;
-
-        document.getElementById('wCost').innerText = `£${weeklyCost.toFixed(2)}`;
-        document.getElementById('wRev').innerText = `£${weeklyRev.toFixed(2)}`;
-        document.getElementById('wProf').innerText = `£${(weeklyRev - weeklyCost).toFixed(2)}`;
-
-        document.getElementById('mCost').innerText = `£${mCost.toFixed(2)}`;
-        document.getElementById('mRev').innerText = `£${mRev.toFixed(2)}`;
-        document.getElementById('mProf').innerText = `£${(mRev - mCost).toFixed(2)}`;
-
-        document.getElementById('yCost').innerText = `£${yCost.toFixed(2)}`;
-        document.getElementById('yRev').innerText = `£${yRev.toFixed(2)}`;
-        document.getElementById('yProf').innerText = `£${(yRev - yCost).toFixed(2)}`;
-    }
-
-    function generateSpreadsheet() {
-        if (currentManifest.length === 0) {
-            alert("No manifest lines created yet.");
-            return;
-        }
-
-        const staff = document.getElementById('orderStaff').value;
-        const delDate = document.getElementById('deliveryDate').value;
-        
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += `GO CATER LOGISTICS CONTROL REPORT\r\n`;
-        csvContent += `Generated By,${staff},Target Timeline,${delDate}\r\n\r\n`;
-        csvContent += "Item,Destination Location,Quantity,Unit Cost Price,Total Cost,Projected Total Revenue,Net Operational Margin\r\n";
-
-        currentManifest.forEach(i => {
-            csvContent += `"${i.name}","${i.destination}",${i.qty},£${i.costUnit.toFixed(2)},£${i.totalCost.toFixed(2)},£${i.totalRev.toFixed(2)},£${i.netYield.toFixed(2)}\r\n`;
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `GO_CATER_MasterManifest_${delDate}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    window.onload = initializeSystem;
+    // Init App
+    renderInventory();
 </script>
 </body>
 </html>

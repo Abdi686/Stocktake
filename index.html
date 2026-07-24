@@ -3,67 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GO CATER - Automated Enterprise Hub</title>
-    <!-- HTML5 Barcode Scanner Library -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <title>Enterprise Hub - Supplier & Spend Forecast System</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; margin: 0; }
         .container { max-width: 1400px; margin: 0 auto; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
         h1, h2, h3 { color: #38bdf8; margin: 0 0 5px 0; }
-        .subtitle { color: #94a3b8; font-size: 0.9rem; margin: 0; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: #0284c7; color: #ffffff; border-color: #38bdf8; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         
-        /* Navigation Tabs */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; position: relative; }
-        .tab-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
-        .tab-content { display: none; background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; }
-        .tab-content.active { display: block; }
-
-        /* Notification Badge */
-        .notif-badge { position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; font-size: 0.75rem; padding: 2px 7px; border-radius: 50%; font-weight: bold; display: none; }
-
-        /* Controls & Grids */
-        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #94a3b8; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        input, select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
-        input:focus, select:focus { border-color: #38bdf8; outline: none; }
+        /* Table Styles */
+        .table-container { max-height: 600px; overflow-y: auto; border: 1px solid #334155; border-radius: 8px;}
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 12px; border-bottom: 1px solid #334155; }
+        th { background: #0f172a; color: #38bdf8; position: sticky; top: 0; z-index: 1;}
         
-        /* Tables */
-        .table-responsive { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #334155; }
-        table { width: 100%; border-collapse: collapse; background: #111827; text-align: left; }
-        th, td { padding: 12px 15px; border-bottom: 1px solid #1f2937; font-size: 0.9rem; }
-        th { background: #1e293b; color: #38bdf8; font-weight: 600; }
-        tr:hover { background: rgba(30, 41, 59, 0.5); }
+        /* Supplier Tags */
+        .supplier-tag { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; white-space: nowrap;}
+        .jj-food { background: #1e3a8a; color: #93c5fd; }
+        .costco { background: #831843; color: #fbcfe8; }
         
-        /* Badges & Buttons */
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
-        .badge-alert { background: #7f1d1d; color: #fecaca; }
-        .badge-ok { background: #064e3b; color: #a7f3d0; }
-        .badge-depot { background: #3b82f6; color: white; }
-        .badge-hub { background: #a855f7; color: white; }
-        .badge-pending { background: #d97706; color: white; }
-
-        .btn { background: #0284c7; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn:hover { background: #0369a1; }
-        .btn-success { background: #10b981; }
-        .btn-success:hover { background: #059669; }
-        .btn-danger { background: #ef4444; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-scan { background: #8b5cf6; }
-        .btn-scan:hover { background: #7c3aed; }
-        
-        .summary-card { background: #111827; padding: 15px; border-radius: 8px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
-        .text-green { color: #10b981; font-weight: bold; }
-        .text-red { color: #f87171; font-weight: bold; }
-        
-        .stock-input { width: 80px; padding: 6px; text-align: center; }
-
-        /* Scanner Modal UI */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); z-index: 999; justify-content: center; align-items: center; }
-        .modal-overlay.active { display: flex; }
-        .modal-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 90%; max-width: 500px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        #reader { width: 100%; border-radius: 8px; overflow: hidden; background: #000; margin-bottom: 15px; }
+        /* Buttons & Layout */
+        .filter-btn { background: #334155; color: #f8fafc; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px; }
+        .filter-btn.active { background: #0284c7; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .metric-value { font-size: 1.8rem; font-weight: bold; color: #38bdf8; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -71,618 +37,250 @@
 <div class="container">
     <header>
         <div>
-            <h1>GO CATER Smart Matrix Hub</h1>
-            <p class="subtitle">Autonomous Purchasing, Delivery Dispatch & Automated Stock Ledger</p>
-        </div>
-        <div style="text-align: right;">
-            <span class="badge badge-depot">Central Logistics Online</span>
-            <span class="badge badge-hub">4 Regional Hubs Linked</span>
+            <h1>GO CATER - Inventory & Procurement Hub</h1>
+            <p style="color:#94a3b8; margin:0;">Supplier Management & Financial Forecasting System</p>
         </div>
     </header>
 
-    <!-- Navigation Menu -->
+    <!-- Navigation Tabs -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('procurement')">1. Purchase Order Builder</button>
-        <button class="tab-btn" onclick="switchTab('stocktake')">2. Live Stock Ledger</button>
-        <button class="tab-btn" onclick="switchTab('deliveries')" id="tabDelivery">
-            3. Inbound Delivery Hub
-            <span id="deliveryBadge" class="notif-badge">0</span>
-        </button>
-        <button class="tab-btn" onclick="switchTab('weekly')">4. Weekly Reception Report</button>
+        <button class="tab-btn active" onclick="switchTab('inventory')">Inventory & Suppliers</button>
+        <button class="tab-btn" onclick="switchTab('reports')">Spend & Forecast Reports</button>
     </div>
 
-    <!-- TAB 1: PROCUREMENT -->
-    <div id="procurement" class="tab-content active">
-        <h2>Central Procurement Order Builder</h2>
-        <p class="subtitle" style="margin-bottom:20px;">Raise master supplier orders and dispatch specific allocations to regional hubs.</p>
-        
-        <div class="grid-4">
-            <div>
-                <label>Order Handled By</label>
-                <input type="text" id="orderStaff" value="Logistics Manager">
+    <!-- Inventory Tab -->
+    <div id="inventory" class="tab-content">
+        <div class="card">
+            <h3>Supplier Inventory Directory (80 Items)</h3>
+            <div class="table-container">
+                <table id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Supplier</th>
+                            <th>Buy Cost (£)</th>
+                            <th>Sell Price (£)</th>
+                            <th>Current Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryBody"></tbody>
+                </table>
             </div>
-            <div>
-                <label>Target Delivery Date</label>
-                <input type="date" id="deliveryDate">
-            </div>
-            <div>
-                <label>Supplier Vendor</label>
-                <select id="supplierName">
-                    <option value="Lioncroft Wholesale">Lioncroft Wholesale Ltd</option>
-                    <option value="Fresh Produce Hub">Fresh Produce Hub</option>
-                </select>
-            </div>
-        </div>
-
-        <hr style="border-color: #334155; margin: 20px 0;">
-
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1.5fr auto; gap: 15px; align-items: end;">
-            <div>
-                <label>Select Item</label>
-                <select id="ingredientDropdown">
-                    <option value="">-- Select Item --</option>
-                </select>
-            </div>
-            <div>
-                <label>Quantity (Cases/Boxes)</label>
-                <input type="number" id="orderQty" min="1" value="1">
-            </div>
-            <div>
-                <label>Target Destination</label>
-                <select id="itemDestination">
-                    <option value="DHL Ryton">DHL Ryton</option>
-                    <option value="Main Kitchen">Main Kitchen</option>
-                    <option value="DHL Segro">DHL Segro</option>
-                    <option value="Nuneaton">Nuneaton</option>
-                    <option value="Rugby">Rugby</option>
-                </select>
-            </div>
-            <div>
-                <button type="button" class="btn" onclick="addItemToOrder()">Add to Order Manifest</button>
-            </div>
-        </div>
-
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Item Description</th>
-                        <th>Target Destination</th>
-                        <th>Qty (Cases)</th>
-                        <th>Cost Base</th>
-                        <th>Est Gross Revenue</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="orderTableBody"></tbody>
-            </table>
-        </div>
-
-        <div class="summary-card">
-            <div>Total Order Cost: <span id="displayTotalCost" class="text-red">£0.00</span></div>
-            <div>Total Projected Value: <span id="displayTotalRev" class="text-green">£0.00</span></div>
-        </div>
-        <button type="button" class="btn btn-success" style="width:100%; margin-top:15px; padding:12px;" onclick="dispatchPurchaseOrder()">🚀 Dispatch Purchase Order & Send Inbound Alerts</button>
-    </div>
-
-    <!-- TAB 2: LIVE STOCK LEDGER -->
-    <div id="stocktake" class="tab-content">
-        <h2>Live Regional Stock Ledger</h2>
-        <p class="subtitle" style="margin-bottom: 20px;">Real-time balance of inventory across all operational nodes.</p>
-        
-        <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <div>
-                <label style="display:inline-block; margin-right:10px;">Filter Location Matrix View:</label>
-                <select id="stockLocationFilter" onchange="renderStockTable()" style="width: auto; display:inline-block;">
-                    <option value="all">View All Nodes</option>
-                    <option value="DHL Ryton">DHL Ryton</option>
-                    <option value="Main Kitchen">Main Kitchen</option>
-                    <option value="DHL Segro">DHL Segro</option>
-                    <option value="Nuneaton">Nuneaton</option>
-                    <option value="Rugby">Rugby</option>
-                </select>
-            </div>
-            <button class="btn btn-scan" onclick="openScanner()">📷 Open Barcode Scanner</button>
-        </div>
-
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Location</th>
-                        <th>Item Name</th>
-                        <th>Category</th>
-                        <th>Safety Min</th>
-                        <th>Safety Max</th>
-                        <th>Current Count</th>
-                        <th>Status</th>
-                        <th>Manual Correction</th>
-                    </tr>
-                </thead>
-                <tbody id="stockTableBody"></tbody>
-            </table>
         </div>
     </div>
 
-    <!-- TAB 3: CONFIRM DELIVERIES & ALERT ACCEPTANCE -->
-    <div id="deliveries" class="tab-content">
-        <h2>Inbound Delivery Acceptance Dock</h2>
-        <p class="subtitle" style="margin-bottom:20px;">Local site managers approve pending arrivals here to automatically update local stock levels.</p>
-        
-        <div style="margin-bottom:15px; max-width:300px;">
-            <label>Filter Pending Inbound By Location:</label>
-            <select id="deliveryLocationFilter" onchange="renderDeliveryDock()">
-                <option value="all">View All Pending Deliveries</option>
-                <option value="DHL Ryton">DHL Ryton</option>
-                <option value="Main Kitchen">Main Kitchen</option>
-                <option value="DHL Segro">DHL Segro</option>
-                <option value="Nuneaton">Nuneaton</option>
-                <option value="Rugby">Rugby</option>
-            </select>
+    <!-- Spend & Forecast Reports Tab -->
+    <div id="reports" class="tab-content" style="display: none;">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+                <h3>Procurement Spending & Forecasting Analysis</h3>
+                <div>
+                    <button class="filter-btn active" onclick="updateReport('daily', this)">Daily</button>
+                    <button class="filter-btn" onclick="updateReport('weekly', this)">Weekly</button>
+                    <button class="filter-btn" onclick="updateReport('monthly', this)">Monthly</button>
+                </div>
+            </div>
+
+            <!-- Summary Metric Cards -->
+            <div class="grid-3">
+                <div class="card" style="margin:0;">
+                    <div>JJ Food Service Spend</div>
+                    <div id="jjSpend" class="metric-value">£0.00</div>
+                </div>
+                <div class="card" style="margin:0;">
+                    <div>Costco Spend</div>
+                    <div id="costcoSpend" class="metric-value">£0.00</div>
+                </div>
+                <div class="card" style="margin:0;">
+                    <div>Total Projected Spend</div>
+                    <div id="totalSpend" class="metric-value" style="color: #4ade80;">£0.00</div>
+                </div>
+            </div>
+
+            <!-- Supplier Breakdown Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Supplier</th>
+                            <th>Item Category</th>
+                            <th>Items Tracked</th>
+                            <th>Calculated Cost (£)</th>
+                            <th>Forecast Spend (+5% Buffer)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody"></tbody>
+                </table>
+            </div>
         </div>
-
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Assigned Dest</th>
-                        <th>Expected Vol</th>
-                        <th>Status Alert</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="deliveryTableBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- TAB 4: WEEKLY RECEPTION REPORT -->
-    <div id="weekly" class="tab-content">
-        <h2>Weekly Received Goods Log & Audit</h2>
-        <p class="subtitle" style="margin-bottom:20px;">Automatically generated weekly report of all items accepted across all locations.</p>
-        
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Timestamp Accepted</th>
-                        <th>Item Name</th>
-                        <th>Location</th>
-                        <th>Quantity Accepted</th>
-                        <th>Total Value</th>
-                    </tr>
-                </thead>
-                <tbody id="weeklyReportTableBody"></tbody>
-            </table>
-        </div>
-        <button type="button" class="btn btn-success" style="width:100%; margin-top:15px; padding:12px;" onclick="exportWeeklyReportCSV()">📥 Export Weekly Reception Log (CSV)</button>
-    </div>
-</div>
-
-<!-- BARCODE SCANNER MODAL -->
-<div id="scannerModal" class="modal-overlay">
-    <div class="modal-box">
-        <h2>Live Barcode Scanner</h2>
-        <p class="subtitle" style="margin-bottom:15px;">Scan item barcode/QR code to update stock (+1 increment).</p>
-        
-        <div style="margin-bottom: 15px;">
-            <label>Scanning Location Target:</label>
-            <select id="scannerLocation">
-                <option value="DHL Ryton">DHL Ryton</option>
-                <option value="Main Kitchen">Main Kitchen</option>
-                <option value="DHL Segro">DHL Segro</option>
-                <option value="Nuneaton">Nuneaton</option>
-                <option value="Rugby">Rugby</option>
-            </select>
-        </div>
-
-        <div id="reader"></div>
-        <div id="scanResult" style="margin-bottom: 15px; color: #38bdf8; font-weight: bold; min-height: 20px; text-align: center;"></div>
-
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="manualBarcode" placeholder="Or enter barcode / ID manually...">
-            <button class="btn" onclick="processBarcode(document.getElementById('manualBarcode').value)">Update</button>
-        </div>
-
-        <button class="btn btn-danger" style="width: 100%; margin-top: 15px;" onclick="closeScanner()">Close Scanner</button>
     </div>
 </div>
 
 <script>
-    // Master Inventory Catalog imported directly from Stock.csv
-    const baseIngredients = [
-        { id: "1", name: "[Bottled Drinks] Fanta Orange", category: "Bottled Drinks", rytonQty: 69, sell: 2.00, min: 10, max: 100 },
-        { id: "2", name: "[Bottled Drinks] Coca-Cola Original", category: "Bottled Drinks", rytonQty: 68, sell: 2.00, min: 10, max: 100 },
-        { id: "3", name: "[Bottled Drinks] Water", category: "Bottled Drinks", rytonQty: 55, sell: 1.00, min: 10, max: 100 },
-        { id: "4", name: "[Bottled Drinks] Mountain Dew", category: "Bottled Drinks", rytonQty: 49, sell: 2.00, min: 10, max: 100 },
-        { id: "5", name: "[Bottled Drinks] Sprite", category: "Bottled Drinks", rytonQty: 41, sell: 2.00, min: 10, max: 100 },
-        { id: "6", name: "[Bottled Drinks] Pepsi Original", category: "Bottled Drinks", rytonQty: 34, sell: 2.00, min: 10, max: 100 },
-        { id: "7", name: "[Bottled Drinks] Boost Energy Original", category: "Bottled Drinks", rytonQty: 28, sell: 1.50, min: 10, max: 100 },
-        { id: "8", name: "[Bottled Drinks] Lipton Ice Tea (Peach)", category: "Bottled Drinks", rytonQty: 25, sell: 2.00, min: 10, max: 100 },
-        { id: "9", name: "[Bottled Drinks] Fanta Fruit Twist", category: "Bottled Drinks", rytonQty: 24, sell: 2.00, min: 10, max: 100 },
-        { id: "10", name: "[Bottled Drinks] Coke Zero", category: "Bottled Drinks", rytonQty: 24, sell: 2.00, min: 10, max: 100 },
-        { id: "11", name: "[Bottled Drinks] Diet Coke", category: "Bottled Drinks", rytonQty: 24, sell: 2.00, min: 10, max: 100 },
-        { id: "12", name: "[Bottled Drinks] Oasis Summer Fruits (Strawberry)", category: "Bottled Drinks", rytonQty: 20, sell: 2.00, min: 10, max: 100 },
-        { id: "13", name: "[Bottled Drinks] Pepsi Max", category: "Bottled Drinks", rytonQty: 15, sell: 2.00, min: 10, max: 100 },
-        { id: "14", name: "[Bottled Drinks] Oasis Citrus Punch", category: "Bottled Drinks", rytonQty: 12, sell: 2.00, min: 10, max: 100 },
-        { id: "15", name: "[Bottled Drinks] Boost Red Berry", category: "Bottled Drinks", rytonQty: 8, sell: 1.50, min: 10, max: 100 },
-        { id: "16", name: "[Soft Drink Cans] Coca-Cola Original", category: "Soft Drink Cans", rytonQty: 204, sell: 1.20, min: 20, max: 250 },
-        { id: "17", name: "[Soft Drink Cans] Sprite", category: "Soft Drink Cans", rytonQty: 65, sell: 1.20, min: 20, max: 250 },
-        { id: "18", name: "[Soft Drink Cans] Pepsi Original", category: "Soft Drink Cans", rytonQty: 53, sell: 1.20, min: 20, max: 250 },
-        { id: "19", name: "[Soft Drink Cans] Coke Zero", category: "Soft Drink Cans", rytonQty: 53, sell: 1.20, min: 20, max: 250 },
-        { id: "20", name: "[Soft Drink Cans] 7Up", category: "Soft Drink Cans", rytonQty: 36, sell: 1.20, min: 20, max: 250 },
-        { id: "21", name: "[Soft Drink Cans] Fanta Lemon", category: "Soft Drink Cans", rytonQty: 33, sell: 1.20, min: 20, max: 250 },
-        { id: "22", name: "[Soft Drink Cans] Tango Apple", category: "Soft Drink Cans", rytonQty: 32, sell: 1.20, min: 20, max: 250 },
-        { id: "23", name: "[Soft Drink Cans] Fanta Orange", category: "Soft Drink Cans", rytonQty: 29, sell: 1.20, min: 20, max: 250 },
-        { id: "24", name: "[Soft Drink Cans] Pepsi Max", category: "Soft Drink Cans", rytonQty: 27, sell: 1.20, min: 20, max: 250 },
-        { id: "25", name: "[Soft Drink Cans] Fanta Fruit Twist", category: "Soft Drink Cans", rytonQty: 24, sell: 1.20, min: 20, max: 250 },
-        { id: "26", name: "[Soft Drink Cans] Lipton Ice Tea (Peach)", category: "Soft Drink Cans", rytonQty: 16, sell: 1.20, min: 20, max: 250 },
-        { id: "27", name: "[Soft Drink Cans] Rio", category: "Soft Drink Cans", rytonQty: 13, sell: 1.20, min: 20, max: 250 },
-        { id: "28", name: "[Soft Drink Cans] Dr Pepper", category: "Soft Drink Cans", rytonQty: 12, sell: 1.20, min: 20, max: 250 },
-        { id: "29", name: "[Soft Drink Cans] Coca-Cola Cherry", category: "Soft Drink Cans", rytonQty: 10, sell: 1.20, min: 20, max: 250 },
-        { id: "30", name: "[Soft Drink Cans] Diet Coke", category: "Soft Drink Cans", rytonQty: 7, sell: 1.20, min: 20, max: 250 },
-        { id: "31", name: "[Soft Drink Cans] Lipton Ice Tea (Lemon)", category: "Soft Drink Cans", rytonQty: 5, sell: 1.20, min: 20, max: 250 },
-        { id: "32", name: "[Soft Drink Cans] Rubicon", category: "Soft Drink Cans", rytonQty: 3, sell: 1.20, min: 20, max: 250 },
-        { id: "33", name: "[Energy Drinks] Monster Pipeline Punch", category: "Energy Drinks", rytonQty: 98, sell: 2.20, min: 15, max: 150 },
-        { id: "34", name: "[Energy Drinks] Monster Original", category: "Energy Drinks", rytonQty: 82, sell: 2.20, min: 15, max: 150 },
-        { id: "35", name: "[Energy Drinks] Monster Ultra White", category: "Energy Drinks", rytonQty: 67, sell: 2.20, min: 15, max: 150 },
-        { id: "36", name: "[Energy Drinks] Red Bull", category: "Energy Drinks", rytonQty: 52, sell: 2.20, min: 15, max: 150 },
-        { id: "37", name: "[Energy Drinks] Monster Mango Loco", category: "Energy Drinks", rytonQty: 48, sell: 2.20, min: 15, max: 150 },
-        { id: "38", name: "[Energy Drinks] Monster Ultra Strawberry", category: "Energy Drinks", rytonQty: 40, sell: 2.20, min: 15, max: 150 },
-        { id: "39", name: "[Energy Drinks] Monster Aussie Lemonade", category: "Energy Drinks", rytonQty: 12, sell: 2.20, min: 15, max: 150 },
-        { id: "40", name: "[Energy Drinks] Monster Ultra Peachy Keen", category: "Energy Drinks", rytonQty: 12, sell: 2.20, min: 15, max: 150 },
-        { id: "41", name: "[Energy Drinks] Monster Monarch", category: "Energy Drinks", rytonQty: 10, sell: 2.20, min: 15, max: 150 },
-        { id: "42", name: "[Energy Drinks] Monster Tropical", category: "Energy Drinks", rytonQty: 10, sell: 2.20, min: 15, max: 150 },
-        { id: "43", name: "[Energy Drinks] Monster Rio Punch", category: "Energy Drinks", rytonQty: 0, sell: 2.20, min: 15, max: 150 },
-        { id: "44", name: "[Mains & Frozen Goods] Cheese Slices", category: "Mains & Frozen Goods", rytonQty: 187, sell: 0.50, min: 50, max: 300 },
-        { id: "45", name: "[Mains & Frozen Goods] Veggie Burger", category: "Mains & Frozen Goods", rytonQty: 70, sell: 4.50, min: 20, max: 100 },
-        { id: "46", name: "[Mains & Frozen Goods] Chicken Strips", category: "Mains & Frozen Goods", rytonQty: 60, sell: 5.00, min: 20, max: 100 },
-        { id: "47", name: "[Mains & Frozen Goods] Seeded Burger Buns", category: "Mains & Frozen Goods", rytonQty: 60, sell: 0.80, min: 20, max: 100 },
-        { id: "48", name: "[Mains & Frozen Goods] Beef Burger", category: "Mains & Frozen Goods", rytonQty: 54, sell: 4.50, min: 20, max: 100 },
-        { id: "49", name: "[Mains & Frozen Goods] Chips", category: "Mains & Frozen Goods", rytonQty: 35, sell: 2.50, min: 10, max: 100 },
-        { id: "50", name: "[Mains & Frozen Goods] Wraps", category: "Mains & Frozen Goods", rytonQty: 33, sell: 1.00, min: 10, max: 100 },
-        { id: "51", name: "[Mains & Frozen Goods] Chicken Fillets", category: "Mains & Frozen Goods", rytonQty: 17, sell: 5.50, min: 10, max: 100 },
-        { id: "52", name: "[Pantry & Condiments] Tea Bags", category: "Pantry & Condiments", rytonQty: 430, sell: 0.20, min: 50, max: 500 },
-        { id: "53", name: "[Pantry & Condiments] Sugar (10kg)", category: "Pantry & Condiments", rytonQty: 20, sell: 15.00, min: 5, max: 50 },
-        { id: "54", name: "[Pantry & Condiments] Sauce Dips", category: "Pantry & Condiments", rytonQty: 100, sell: 0.40, min: 20, max: 200 },
-        { id: "55", name: "[Pantry & Condiments] Burger Sauce", category: "Pantry & Condiments", rytonQty: 2, sell: 4.00, min: 1, max: 10 },
-        { id: "56", name: "[Pantry & Condiments] Sweet Chilli Sauce", category: "Pantry & Condiments", rytonQty: 2, sell: 4.00, min: 1, max: 10 },
-        { id: "57", name: "[Pantry & Condiments] Mayonnaise", category: "Pantry & Condiments", rytonQty: 1, sell: 4.00, min: 1, max: 10 },
-        { id: "58", name: "[Packaging & Supplies] Spoons", category: "Packaging & Supplies", rytonQty: 500, sell: 0.05, min: 100, max: 1000 },
-        { id: "59", name: "[Packaging & Supplies] Forks", category: "Packaging & Supplies", rytonQty: 200, sell: 0.05, min: 100, max: 1000 },
-        { id: "60", name: "[Packaging & Supplies] Wrap Paper", category: "Packaging & Supplies", rytonQty: 30, sell: 0.10, min: 10, max: 200 },
-        { id: "61", name: "[Packaging & Supplies] Meal Boxes", category: "Packaging & Supplies", rytonQty: 15, sell: 0.30, min: 10, max: 200 },
-        { id: "62", name: "[Packaging & Supplies] Blue Roll", category: "Packaging & Supplies", rytonQty: 16, sell: 2.00, min: 5, max: 50 },
-        { id: "63", name: "[Packaging & Supplies] Cooking Oil (5L)", category: "Packaging & Supplies", rytonQty: 18, sell: 12.00, min: 5, max: 50 },
-        { id: "64", name: "[Packaging & Supplies] Fairy Liquid", category: "Packaging & Supplies", rytonQty: 2, sell: 3.00, min: 1, max: 10 },
-        { id: "65", name: "[Packaging & Supplies] White Bags", category: "Packaging & Supplies", rytonQty: 3, sell: 5.00, min: 1, max: 20 },
-        { id: "66", name: "[Packaging & Supplies] Gloves", category: "Packaging & Supplies", rytonQty: 1, sell: 8.00, min: 1, max: 10 },
-        { id: "67", name: "[Packaging & Supplies] Small Cups", category: "Packaging & Supplies", rytonQty: 1, sell: 10.00, min: 1, max: 10 },
-        { id: "68", name: "[Produce] Onions", category: "Produce", rytonQty: 10, sell: 0.50, min: 5, max: 50 },
-        { id: "69", name: "[Produce] Lettuce", category: "Produce", rytonQty: 4, sell: 1.00, min: 2, max: 20 },
-        { id: "70", name: "[Produce] Tomatoes", category: "Produce", rytonQty: 3, sell: 1.00, min: 2, max: 20 },
-        { id: "71", name: "[Confectionery & Snacks] Extra Gum", category: "Confectionery & Snacks", rytonQty: 126, sell: 0.80, min: 20, max: 200 },
-        { id: "72", name: "[Confectionery & Snacks] Werther's Original", category: "Confectionery & Snacks", rytonQty: 120, sell: 0.80, min: 20, max: 200 },
-        { id: "73", name: "[Confectionery & Snacks] Parle", category: "Confectionery & Snacks", rytonQty: 95, sell: 0.60, min: 20, max: 200 },
-        { id: "74", name: "[Confectionery & Snacks] Bounty", category: "Confectionery & Snacks", rytonQty: 57, sell: 1.00, min: 10, max: 100 },
-        { id: "75", name: "[Confectionery & Snacks] Snickers", category: "Confectionery & Snacks", rytonQty: 24, sell: 1.00, min: 10, max: 100 },
-        { id: "76", name: "[Confectionery & Snacks] 5 Star", category: "Confectionery & Snacks", rytonQty: 23, sell: 1.00, min: 10, max: 100 },
-        { id: "77", name: "[Confectionery & Snacks] KitKat", category: "Confectionery & Snacks", rytonQty: 22, sell: 1.00, min: 10, max: 100 },
-        { id: "78", name: "[Confectionery & Snacks] Kinder Bueno", category: "Confectionery & Snacks", rytonQty: 16, sell: 1.20, min: 10, max: 100 },
-        { id: "79", name: "[Confectionery & Snacks] Mr Tom", category: "Confectionery & Snacks", rytonQty: 14, sell: 1.00, min: 10, max: 100 },
-        { id: "80", name: "[Confectionery & Snacks] Fruittella", category: "Confectionery & Snacks", rytonQty: 4, sell: 0.80, min: 5, max: 50 }
+    // Master Inventory Data loaded directly from Stock.csv mapped to Suppliers
+    const inventory = [
+        { "id": "1", "name": "Fanta Orange", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "69 Bottles" },
+        { "id": "2", "name": "Coca-Cola Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "68 Bottles" },
+        { "id": "3", "name": "Water", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "55 Bottles" },
+        { "id": "4", "name": "Mountain Dew", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "49 Bottles" },
+        { "id": "5", "name": "Sprite", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "41 Bottles" },
+        { "id": "6", "name": "Pepsi Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "34 Bottles" },
+        { "id": "7", "name": "Boost Energy Original", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "28 Bottles" },
+        { "id": "8", "name": "Lipton Ice Tea (Peach)", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "25 Bottles" },
+        { "id": "9", "name": "Fanta Fruit Twist", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "24 Bottles" },
+        { "id": "10", "name": "Coke Zero", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "24 Bottles" },
+        { "id": "11", "name": "Diet Coke", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "24 Bottles" },
+        { "id": "12", "name": "Oasis Summer Fruits", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "20 Bottles" },
+        { "id": "13", "name": "Pepsi Max", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "15 Bottles" },
+        { "id": "14", "name": "Oasis Citrus Punch", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "12 Bottles" },
+        { "id": "15", "name": "Boost Red Berry", "category": "Bottled Drinks", "supplier": "Costco", "cost": 12.5, "sell": 22.5, "total": "8 Bottles" },
+        { "id": "16", "name": "Coca-Cola Original", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "204 Cans" },
+        { "id": "17", "name": "Sprite", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "65 Cans" },
+        { "id": "18", "name": "Pepsi Original", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "53 Cans" },
+        { "id": "19", "name": "Coke Zero", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "53 Cans" },
+        { "id": "20", "name": "7Up", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "36 Cans" },
+        { "id": "21", "name": "Fanta Lemon", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "33 Cans" },
+        { "id": "22", "name": "Tango Apple", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "32 Cans" },
+        { "id": "23", "name": "Fanta Orange", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "29 Cans" },
+        { "id": "24", "name": "Pepsi Max", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "27 Cans" },
+        { "id": "25", "name": "Fanta Fruit Twist", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "24 Cans" },
+        { "id": "26", "name": "Lipton Ice Tea (Peach)", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "16 Cans" },
+        { "id": "27", "name": "Rio", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "13 Cans" },
+        { "id": "28", "name": "Dr Pepper", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "12 Cans" },
+        { "id": "29", "name": "Coca-Cola Cherry", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "10 Cans" },
+        { "id": "30", "name": "Diet Coke", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "7 Cans" },
+        { "id": "31", "name": "Lipton Ice Tea (Lemon)", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "5 Cans" },
+        { "id": "32", "name": "Rubicon", "category": "Soft Drink Cans", "supplier": "Costco", "cost": 9.99, "sell": 17.98, "total": "3 Cans" },
+        { "id": "33", "name": "Monster Pipeline Punch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "98 Cans" },
+        { "id": "34", "name": "Monster Original", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "82 Cans" },
+        { "id": "35", "name": "Monster Ultra White", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "67 Cans" },
+        { "id": "36", "name": "Red Bull", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "52 Cans" },
+        { "id": "37", "name": "Monster Mango Loco", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "48 Cans" },
+        { "id": "38", "name": "Monster Ultra Strawberry", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "40 Cans" },
+        { "id": "39", "name": "Monster Aussie Lemonade", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "12 Cans" },
+        { "id": "40", "name": "Monster Ultra Peachy Keen", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "12 Cans" },
+        { "id": "41", "name": "Monster Monarch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "10 Cans" },
+        { "id": "42", "name": "Monster Tropical", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "10 Cans" },
+        { "id": "43", "name": "Monster Rio Punch", "category": "Energy Drinks", "supplier": "Costco", "cost": 18.5, "sell": 33.3, "total": "0 Cans" },
+        { "id": "44", "name": "Cheese Slices", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "187 Slices" },
+        { "id": "45", "name": "Veggie Burger", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "70 Pieces" },
+        { "id": "46", "name": "Chicken Strips", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "60 Pieces" },
+        { "id": "47", "name": "Seeded Burger Buns", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "60 Pieces" },
+        { "id": "48", "name": "Beef Burger", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "54 Pieces" },
+        { "id": "49", "name": "Chips", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "35 Packs" },
+        { "id": "50", "name": "Wraps", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "33 Pieces" },
+        { "id": "51", "name": "Chicken Fillets", "category": "Mains & Frozen Goods", "supplier": "JJ Food Service", "cost": 22.0, "sell": 39.6, "total": "17 Pieces" },
+        { "id": "52", "name": "Tea Bags", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "430 Tea Bags" },
+        { "id": "53", "name": "Sugar (10kg)", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "20 kg" },
+        { "id": "54", "name": "Sauce Dips", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "100 Dips" },
+        { "id": "55", "name": "Burger Sauce", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "2 Bottles" },
+        { "id": "56", "name": "Sweet Chilli Sauce", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "2 Bottles" },
+        { "id": "57", "name": "Mayonnaise", "category": "Pantry & Condiments", "supplier": "JJ Food Service", "cost": 8.5, "sell": 15.3, "total": "0.5 Bottle" },
+        { "id": "58", "name": "Spoons", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "500 Pieces" },
+        { "id": "59", "name": "Forks", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "200 Pieces" },
+        { "id": "60", "name": "Wrap Paper", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "30 Pieces" },
+        { "id": "61", "name": "Meal Boxes", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "15 Pieces" },
+        { "id": "62", "name": "Blue Roll", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "16 Rolls" },
+        { "id": "63", "name": "Cooking Oil (5L)", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "17.5 Litres" },
+        { "id": "64", "name": "Fairy Liquid", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "1.5 Bottles" },
+        { "id": "65", "name": "White Bags", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "3 Packs" },
+        { "id": "66", "name": "Gloves", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "1 Box (30s)" },
+        { "id": "67", "name": "Small Cups", "category": "Packaging & Supplies", "supplier": "JJ Food Service", "cost": 15.0, "sell": 27.0, "total": "1 Box" },
+        { "id": "68", "name": "Onions", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "total": "10 Pieces" },
+        { "id": "69", "name": "Lettuce", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "total": "4 Pieces" },
+        { "id": "70", "name": "Tomatoes", "category": "Produce", "supplier": "JJ Food Service", "cost": 6.0, "sell": 10.8, "total": "3 Pieces" },
+        { "id": "71", "name": "Extra Gum", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "126 Pieces" },
+        { "id": "72", "name": "Werther's Original", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "120 Pieces" },
+        { "id": "73", "name": "Parle", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "95 Pieces" },
+        { "id": "74", "name": "Bounty", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "57 Pieces" },
+        { "id": "75", "name": "Snickers", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "24 Pieces" },
+        { "id": "76", "name": "5 Star", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "23 Pieces" },
+        { "id": "77", "name": "KitKat", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "22 Pieces" },
+        { "id": "78", "name": "Kinder Bueno", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "16 Pieces" },
+        { "id": "79", "name": "Mr Tom", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "14 Pieces" },
+        { "id": "80", "name": "Fruittella", "category": "Confectionery & Snacks", "supplier": "Costco", "cost": 11.0, "sell": 19.8, "total": "4 Pieces" }
     ];
 
-    baseIngredients.forEach(item => {
-        item.cost = Math.round((item.sell * 0.40) * 100) / 100;
-    });
-
-    const locations = ["DHL Ryton", "Main Kitchen", "DHL Segro", "Nuneaton", "Rugby"];
-    let inventoryState = [];
-    let currentManifest = [];
-    let pendingInboundAlerts = [];
-    let weeklyReceivedLog = [];
-    let html5QrCode = null;
-
-    function initializeSystem() {
-        document.getElementById('deliveryDate').value = new Date().toISOString().split('T')[0];
-
-        // DHL Ryton starts with exact CSV numbers; all other locations start at 0
-        locations.forEach(loc => {
-            baseIngredients.forEach(ing => {
-                inventoryState.push({
-                    location: loc,
-                    id: ing.id,
-                    name: ing.name,
-                    category: ing.category,
-                    min: ing.min,
-                    max: ing.max,
-                    current: (loc === "DHL Ryton") ? ing.rytonQty : 0
-                });
-            });
-        });
-
-        const dropdown = document.getElementById('ingredientDropdown');
-        baseIngredients.forEach(ing => {
-            let opt = document.createElement('option');
-            opt.value = ing.id;
-            opt.innerText = `${ing.name} (Est Sell: £${ing.sell.toFixed(2)})`;
-            dropdown.appendChild(opt);
-        });
-
-        renderAll();
+    function renderInventory() {
+        const body = document.getElementById('inventoryBody');
+        body.innerHTML = inventory.map(item => `
+            <tr>
+                <td>#${item.id}</td>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.category}</td>
+                <td><span class="supplier-tag ${item.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${item.supplier}</span></td>
+                <td>£${item.cost.toFixed(2)}</td>
+                <td>£${item.sell.toFixed(2)}</td>
+                <td>${item.total}</td>
+            </tr>
+        `).join('');
     }
 
     function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).style.display = 'block';
+        event.target.classList.add('active');
+        if (tabId === 'reports') updateReport('daily');
     }
 
-    function addItemToOrder() {
-        const itemSelect = document.getElementById('ingredientDropdown').value;
-        const qty = parseInt(document.getElementById('orderQty').value) || 0;
-        const dest = document.getElementById('itemDestination').value;
-
-        if (!itemSelect || qty <= 0) {
-            alert("Verify selected item and quantity.");
-            return;
+    // Function to calculate aggregate spend per supplier category based on items logic
+    function updateReport(timeframe, btnEl) {
+        if (btnEl) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
         }
 
-        const template = baseIngredients.find(i => i.id === itemSelect);
-        const totalCost = template.cost * qty;
-        const totalRev = template.sell * qty;
+        let jjTotal = 0;
+        let costcoTotal = 0;
+        const aggregated = {};
 
-        currentManifest.push({
-            id: template.id,
-            name: template.name,
-            qty: qty,
-            destination: dest,
-            costUnit: template.cost,
-            sellUnit: template.sell,
-            totalCost: totalCost,
-            totalRev: totalRev
-        });
-
-        renderAll();
-    }
-
-    function removeManifestItem(idx) {
-        currentManifest.splice(idx, 1);
-        renderAll();
-    }
-
-    function dispatchPurchaseOrder() {
-        if (currentManifest.length === 0) {
-            alert("No items added to order manifest.");
-            return;
-        }
-
-        currentManifest.forEach(item => {
-            pendingInboundAlerts.push({...item});
-        });
-
-        alert(`Purchase order dispatched! Notifications sent to target hub managers.`);
-        currentManifest = [];
-        renderAll();
-    }
-
-    function acceptAndIngestStock(idx) {
-        const item = pendingInboundAlerts[idx];
-        let stockRecord = inventoryState.find(s => s.location === item.destination && s.id === item.id);
-        
-        if (stockRecord) {
-            stockRecord.current += item.qty;
-        }
-
-        weeklyReceivedLog.push({
-            timestamp: new Date().toLocaleString(),
-            name: item.name,
-            location: item.destination,
-            qty: item.qty,
-            totalValue: item.sellUnit * item.qty
-        });
-
-        pendingInboundAlerts.splice(idx, 1);
-        alert(`Stock accepted at ${item.destination}! Inventory updated automatically.`);
-        renderAll();
-    }
-
-    function renderAll() {
-        renderProcurementTable();
-        renderStockTable();
-        renderDeliveryDock();
-        renderWeeklyReport();
-        updateNotificationBadges();
-    }
-
-    function renderProcurementTable() {
-        const tbody = document.getElementById('orderTableBody');
-        tbody.innerHTML = "";
-        let aggC = 0, aggR = 0;
-
-        currentManifest.forEach((item, idx) => {
-            aggC += item.totalCost;
-            aggR += item.totalRev;
-
-            tbody.innerHTML += `<tr>
-                <td><strong>${item.name}</strong></td>
-                <td><span class="badge badge-hub">${item.destination}</span></td>
-                <td>${item.qty}</td>
-                <td>£${item.totalCost.toFixed(2)}</td>
-                <td>£${item.totalRev.toFixed(2)}</td>
-                <td><button type="button" class="btn btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="removeManifestItem(${idx})">✕</button></td>
-            </tr>`;
-        });
-
-        document.getElementById('displayTotalCost').innerText = `£${aggC.toFixed(2)}`;
-        document.getElementById('displayTotalRev').innerText = `£${aggR.toFixed(2)}`;
-    }
-
-    function renderStockTable() {
-        const tbody = document.getElementById('stockTableBody');
-        const filter = document.getElementById('stockLocationFilter').value;
-        tbody.innerHTML = "";
-
-        inventoryState.forEach(row => {
-            if (filter !== 'all' && row.location !== filter) return;
-
-            const isLow = row.current < row.min;
-            const statusBadge = isLow ? `<span class="badge badge-alert">LOW STOCK</span>` : `<span class="badge badge-ok">OK</span>`;
-            
-            tbody.innerHTML += `<tr>
-                <td><strong>${row.location}</strong></td>
-                <td>${row.name}</td>
-                <td><span class="badge badge-depot">${row.category}</span></td>
-                <td>${row.min}</td>
-                <td>${row.max}</td>
-                <td style="${isLow ? 'color:#f87171; font-weight:bold;' : ''}">${row.current}</td>
-                <td>${statusBadge}</td>
-                <td>
-                    <input type="number" class="stock-input" value="${row.current}" onchange="updatePhysicalStock('${row.location}', '${row.id}', this.value)">
-                </td>
-            </tr>`;
-        });
-    }
-
-    function updatePhysicalStock(loc, id, newVol) {
-        let stockRecord = inventoryState.find(s => s.location === loc && s.id === id);
-        if (stockRecord) {
-            stockRecord.current = parseInt(newVol) || 0;
-            renderStockTable();
-        }
-    }
-
-    function renderDeliveryDock() {
-        const tbody = document.getElementById('deliveryTableBody');
-        const filter = document.getElementById('deliveryLocationFilter').value;
-        tbody.innerHTML = "";
-
-        const filteredList = pendingInboundAlerts.filter(item => filter === 'all' || item.destination === filter);
-
-        if (filteredList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">No pending inbound deliveries for this filter.</td></tr>`;
-            return;
-        }
-
-        pendingInboundAlerts.forEach((item, idx) => {
-            if (filter !== 'all' && item.destination !== filter) return;
-
-            tbody.innerHTML += `<tr>
-                <td><strong>${item.name}</strong></td>
-                <td><span class="badge badge-hub">${item.destination}</span></td>
-                <td>${item.qty} units expected</td>
-                <td><span class="badge badge-pending">🔔 Action Required</span></td>
-                <td><button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="acceptAndIngestStock(${idx})">✓ Accept & Ingest to Stock</button></td>
-            </tr>`;
-        });
-    }
-
-    function renderWeeklyReport() {
-        const tbody = document.getElementById('weeklyReportTableBody');
-        tbody.innerHTML = "";
-
-        if (weeklyReceivedLog.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">No received goods recorded this week.</td></tr>`;
-            return;
-        }
-
-        weeklyReceivedLog.forEach(row => {
-            tbody.innerHTML += `<tr>
-                <td>${row.timestamp}</td>
-                <td><strong>${row.name}</strong></td>
-                <td><span class="badge badge-depot">${row.location}</span></td>
-                <td>${row.qty}</td>
-                <td class="text-green">£${row.totalValue.toFixed(2)}</td>
-            </tr>`;
-        });
-    }
-
-    function updateNotificationBadges() {
-        const badge = document.getElementById('deliveryBadge');
-        if (pendingInboundAlerts.length > 0) {
-            badge.innerText = pendingInboundAlerts.length;
-            badge.style.display = 'inline-block';
-        } else {
-            badge.style.display = 'none';
-        }
-    }
-
-    function exportWeeklyReportCSV() {
-        if (weeklyReceivedLog.length === 0) {
-            alert("No data available in weekly received log.");
-            return;
-        }
-
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Timestamp Accepted,Item Name,Destination Location,Quantity Accepted,Total Value\r\n";
-
-        weeklyReceivedLog.forEach(r => {
-            csvContent += `"${r.timestamp}","${r.name}","${r.location}",${r.qty},£${r.totalValue.toFixed(2)}\r\n`;
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `GO_CATER_Weekly_Report_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    /* BARCODE SCANNER LOGIC */
-    function openScanner() {
-        document.getElementById('scannerModal').classList.add('active');
-        document.getElementById('scanResult').innerText = "Initializing camera...";
-
-        if (!html5QrCode) {
-            html5QrCode = new Html5Qrcode("reader");
-        }
-
-        html5QrCode.start(
-            { facingMode: "environment" }, 
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            (decodedText) => { processBarcode(decodedText); },
-            () => {}
-        ).then(() => {
-            document.getElementById('scanResult').innerText = "Ready! Point camera at barcode.";
-        }).catch(err => {
-            document.getElementById('scanResult').innerText = "Camera access error or unsupported device.";
-        });
-    }
-
-    function closeScanner() {
-        if (html5QrCode && html5QrCode.isScanning) {
-            html5QrCode.stop().then(() => {
-                document.getElementById('scannerModal').classList.remove('active');
-            });
-        } else {
-            document.getElementById('scannerModal').classList.remove('active');
-        }
-    }
-
-    function processBarcode(scannedCode) {
-        if (!scannedCode) return;
-        const targetLoc = document.getElementById('scannerLocation').value;
-        const cleanCode = scannedCode.trim().toLowerCase();
-
-        let matchedIng = baseIngredients.find(i => i.id === cleanCode || i.name.toLowerCase().includes(cleanCode));
-
-        if (matchedIng) {
-            let stockRecord = inventoryState.find(s => s.location === targetLoc && s.id === matchedIng.id);
-            if (stockRecord) {
-                stockRecord.current += 1;
-                document.getElementById('scanResult').innerText = `✅ Updated: ${matchedIng.name} @ ${targetLoc} (New Qty: ${stockRecord.current})`;
-                renderStockTable();
+        // Aggregate static logic simulating historical average purchasing behavior
+        inventory.forEach(item => {
+            const key = `${item.supplier} - ${item.category}`;
+            if (!aggregated[key]) {
+                aggregated[key] = { supplier: item.supplier, category: item.category, count: 0, cost: 0 };
             }
-        } else {
-            document.getElementById('scanResult').innerText = `❌ Item barcode/ID "${scannedCode}" not recognized.`;
-        }
+            aggregated[key].count += 1;
+            
+            // Assume 1 unit cost per item per day is recorded for base average
+            aggregated[key].cost += item.cost; 
+            
+            if (item.supplier === 'JJ Food Service') jjTotal += item.cost;
+            if (item.supplier === 'Costco') costcoTotal += item.cost;
+        });
+
+        // Timeframe Multipliers to build Daily/Weekly/Monthly Forecasting
+        const scaleMap = {
+            'daily': 1,           // 1x Daily average
+            'weekly': 5,          // 5x delivery days a week
+            'monthly': 21         // 21 working days a month
+        };
+        const multiplier = scaleMap[timeframe];
+
+        document.getElementById('jjSpend').innerText = `£${(jjTotal * multiplier).toFixed(2)}`;
+        document.getElementById('costcoSpend').innerText = `£${(costcoTotal * multiplier).toFixed(2)}`;
+        document.getElementById('totalSpend').innerText = `£${((jjTotal + costcoTotal) * multiplier).toFixed(2)}`;
+
+        const tbody = document.getElementById('reportTableBody');
+        tbody.innerHTML = Object.values(aggregated).map(row => {
+            let rowCost = row.cost * multiplier;
+            return `
+                <tr>
+                    <td><span class="supplier-tag ${row.supplier === 'JJ Food Service' ? 'jj-food' : 'costco'}">${row.supplier}</span></td>
+                    <td>${row.category}</td>
+                    <td>${row.count} Items</td>
+                    <td>£${rowCost.toFixed(2)}</td>
+                    <td style="color:#4ade80;">£${(rowCost * 1.05).toFixed(2)}</td>
+                </tr>
+            `;
+        }).join('');
     }
 
-    window.onload = initializeSystem;
+    // Init App
+    renderInventory();
 </script>
 </body>
 </html>
